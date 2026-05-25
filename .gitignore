@@ -18,7 +18,7 @@ coverage.*
 profile.cov
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
 
 # Go workspace file
 go.work
@@ -26,6 +26,19 @@ go.work.sum
 
 # env file
 .env
+
+# DS
+.DS_store
+Thumbs.db
+
+# Uploads
+uploads/
+
+# Database
+*.db
+*.sqlite
+
+*.log
 
 # Editor/IDE
 # .idea/
