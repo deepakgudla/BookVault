@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password 
+      POSTGRES_DB: bookvault
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  localstack:
+    image: localstack/localstack:3.8
+    container_name: localstack_container
+    environment:
+      - SERVICES=s3,sqs
+      - DEFAULT_REGION=
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_ACCESS_KEY=test
+      - AWS_SECRET_KEY=test
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack_data:/var/lib/localstack
+
+volumes:
+  postgres_data:
+  localstack_data:
+
