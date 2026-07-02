@@ -6,7 +6,7 @@ help:
 	@echo " make run          -    run the app"
 	@echo " make dev          -    run the application in dev mode"
 	@echo "make lint          -    run linter on the codebase"
-	@echo "make migrate up    -    apply db migration"
+	@echo "make migrate-up    -    apply db migration"
 	@echo "make migrate-down  -    rollback database migration"
 	
 build:
@@ -18,14 +18,18 @@ run:
 dev:
 	go run ./cmd/api
 
-lint:
+lint: format
 	golangci-lint run ./...
 
+format:
+	@gofmt -s -w .
+	@goimports -w .
+
 migrate-up:
-	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5432/bookvault?sslmode=disable" up
+	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5433/bookvault?sslmode=disable" up
 
 migrate-down:
-	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5432/bookvault?sslmode=disable" down
+	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5433/bookvault?sslmode=disable" down
 
 docker-up:
 	docker compose -f docker/docker-compose.yml up -d

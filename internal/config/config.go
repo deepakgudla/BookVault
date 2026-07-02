@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// config
 type Config struct {
 	Server   ServerConfig
 	Database DBConfig
@@ -16,11 +17,13 @@ type Config struct {
 	Upload   UploadConfig
 }
 
+// ServerConfig fields
 type ServerConfig struct {
 	Port    string
 	GinMode string
 }
 
+// DBConfig fields
 type DBConfig struct {
 	Host     string
 	Port     string
@@ -30,12 +33,14 @@ type DBConfig struct {
 	SSLMode  string
 }
 
+// JWT configuration
 type JWTConfig struct {
 	Secret              string
 	ExpiresIn           time.Duration
 	RefreshTokenExpires time.Duration
 }
 
+// AWS configuration
 type AWSConfig struct {
 	Region     string
 	AccessKey  string
@@ -44,16 +49,18 @@ type AWSConfig struct {
 	S3Endpoint string
 }
 
+// Upload config
 type UploadConfig struct {
 	Path        string
 	MaxFileSize int64
 }
 
+// load function loads config
 func Load() (*Config, error) {
 	_ = godotenv.Load()
 
 	jwtExpiresIn, _ := time.ParseDuration(getEnv("JWT_EXPIRES_IN", "24h"))
-	refreshTokenExpires, _ := time.ParseDuration((getEnv("REFRESH_TOKEN_EXPIRES_IN", "24h")))
+	refreshTokenExpires, _ := time.ParseDuration((getEnv("REFRESH_TOKEN_EXPIRES_IN", "720h")))
 	maxUploadSize, _ := strconv.ParseInt(getEnv("MAX_UPLOAD_SIZE", "10485760"), 10, 64)
 
 	return &Config{

@@ -9,7 +9,8 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func New(cfg config.DBConfig) (*gorm.DB, error) {
+// Database connection
+func New(cfg *config.DBConfig) (*gorm.DB, error) {
 	abc := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=UTC",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name, cfg.SSLMode)
@@ -23,5 +24,4 @@ func New(cfg config.DBConfig) (*gorm.DB, error) {
 	}
 
 	return db, nil
-
 }

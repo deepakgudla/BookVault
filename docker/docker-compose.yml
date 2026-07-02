@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: password 
       POSTGRES_DB: bookvault
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
   localstack:
@@ -15,7 +15,7 @@ services:
     container_name: localstack_container
     environment:
       - SERVICES=s3,sqs
-      - DEFAULT_REGION=
+      - DEFAULT_REGION= ap-south-2
       - DATA_DIR=/tmp/localstack/data
       - AWS_ACCESS_KEY=test
       - AWS_SECRET_KEY=test

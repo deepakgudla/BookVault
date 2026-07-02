@@ -7,14 +7,11 @@ run:
 linters:
   enable:
     - errcheck
-    - gosimple
+    # - gosimple
     - govet
     - ineffassign
     - staticcheck
-    # - typecheck
     - unused
-    - gofmt
-    - goimports
     - misspell
     - gocritic
     - revive
@@ -34,3 +31,8 @@ linters:
     revive:
       rules:
         - name: exported
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
