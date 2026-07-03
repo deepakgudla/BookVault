@@ -51,8 +51,9 @@ type AWSConfig struct {
 
 // Upload config
 type UploadConfig struct {
-	Path        string
-	MaxFileSize int64
+	Path           string
+	MaxFileSize    int64
+	UploadProvider string
 }
 
 // load function loads config
@@ -70,7 +71,7 @@ func Load() (*Config, error) {
 		},
 		Database: DBConfig{
 			Host:     getEnv("DB_HOST", "localhost"),
-			Port:     getEnv("DB_PORT", "5432"),
+			Port:     getEnv("DB_PORT", "5433"),
 			User:     getEnv("DB_USER", "user"),
 			Password: getEnv("DB_PASSWORD", "password"),
 			Name:     getEnv("DB_NAME", "bookvault"),
@@ -89,8 +90,9 @@ func Load() (*Config, error) {
 			S3Endpoint: getEnv("S3ENDPOINT", "http://localhost:4566"),
 		},
 		Upload: UploadConfig{
-			Path:        getEnv("PATH", "./uploads"),
-			MaxFileSize: maxUploadSize,
+			Path:           getEnv("UPLOAD_PATH", "./uploads"),
+			MaxFileSize:    maxUploadSize,
+			UploadProvider: getEnv("UPLOAD_PROVIDER", "local"), // change it to S3 later on
 		},
 	}, nil
 

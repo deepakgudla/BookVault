@@ -4,22 +4,38 @@ import (
 	"net/http"
 
 	"github.com/deepakgudla/BookVault/internal/config"
+	"github.com/deepakgudla/BookVault/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 )
 
 type Server struct {
-	config *config.Config
-	db     *gorm.DB
-	logger *zerolog.Logger
+	config         *config.Config
+	db             *gorm.DB
+	logger         *zerolog.Logger
+	authService    *services.AuthService
+	productService *services.ProductService
+	userService    *services.UserService
+	uploadService  *services.UploadService
 }
 
-func New(cfg *config.Config, db *gorm.DB, logger *zerolog.Logger) *Server {
+func New(cfg *config.Config,
+	db *gorm.DB,
+	logger *zerolog.Logger,
+	authService *services.AuthService,
+	productService *services.ProductService,
+	userService *services.UserService,
+	uploadService *services.UploadService,
+) *Server {
 	return &Server{
-		config: cfg,
-		db:     db,
-		logger: logger,
+		config:         cfg,
+		db:             db,
+		logger:         logger,
+		authService:    authService,
+		productService: productService,
+		userService:    userService,
+		uploadService:  uploadService,
 	}
 }
 
@@ -33,6 +49,51 @@ func (s *Server) SetupRoutes() *gin.Engine {
 
 	// routes
 	router.GET("/health", s.HealthCheck)
+
+	router.Static("/uploads", "./uploads")
+
+	api := router.Group("/api/v1")
+	{
+		auth := api.Group("/auth")
+		{
+			auth.POST("/register", s.register)
+			auth.POST("/login", s.login)
+			auth.POST("logout", s.logout)
+			auth.POST("/refresh", s.refreshToken)
+		}
+
+		protected := api.Group("/")
+		protected.Use(s.authMiddleware())
+		{
+			users := protected.Group("/users")
+			{
+				userRoutes := users
+				userRoutes.GET("/profile", s.getProfile)
+				userRoutes.PUT("/profile", s.updateProfile)
+			}
+
+			categories := protected.Group("/categories")
+			{
+				categoryRoutes := categories
+				categoryRoutes.POST("/", s.adminMiddleware(), s.createCategory)
+				categoryRoutes.PUT("/:id", s.adminMiddleware(), s.updateCategory)
+				categoryRoutes.DELETE("/:id", s.adminMiddleware(), s.deleteCategory)
+			}
+
+			products := protected.Group("/products")
+			{
+				productRoutes := products
+				productRoutes.POST("/", s.adminMiddleware(), s.createProduct)
+				productRoutes.PUT("/:id", s.adminMiddleware(), s.updateProduct)
+				productRoutes.DELETE("/:id", s.adminMiddleware(), s.deleteProduct)
+				productRoutes.POST("/:id/images", s.adminMiddleware(), s.uploadProductImage)
+			}
+		}
+
+		api.GET("/categories", s.getCategories)
+		api.GET("/products", s.getProducts)
+		api.GET("/products/:id", s.getProduct)
+	}
 
 	return router
 }
@@ -53,6 +114,5 @@ func (s *Server) corsMiddleware() gin.HandlerFunc {
 		}
 
 		c.Next()
-
 	}
 }

@@ -12,8 +12,11 @@ import (
 
 	"github.com/deepakgudla/BookVault/internal/config"
 	"github.com/deepakgudla/BookVault/internal/database"
+	"github.com/deepakgudla/BookVault/internal/interfaces"
 	"github.com/deepakgudla/BookVault/internal/logger"
+	"github.com/deepakgudla/BookVault/internal/providers"
 	"github.com/deepakgudla/BookVault/internal/server"
+	"github.com/deepakgudla/BookVault/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,7 +45,20 @@ func main() {
 
 	gin.SetMode(cfg.Server.GinMode)
 
-	serve := server.New(cfg, db, &log)
+	authService := services.NewAuthService(db, cfg)
+	productService := services.NewProductService(db)
+	userService := services.NewUserService(db)
+
+	var uploadProvider interfaces.UploadProvider
+	if cfg.Upload.UploadProvider == "s3" {
+		uploadProvider = providers.NewS3Provider(cfg)
+	} else {
+		uploadProvider = providers.NewLocalUploadProvider(cfg.Upload.Path)
+	}
+
+	uploadService := services.NewUploadService(uploadProvider)
+
+	serve := server.New(cfg, db, &log, authService, productService, userService, uploadService)
 
 	router := serve.SetupRoutes()
 

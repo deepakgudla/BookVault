@@ -17,7 +17,7 @@ func (s *Server) authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		tokenParts := strings.Split(authHeader, "")
+		tokenParts := strings.Split(authHeader, " ")
 		if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
 			utils.UnauthorizedResponse(c, "invalid authorization header format")
 			c.Abort()
