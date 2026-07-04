@@ -48,6 +48,8 @@ func main() {
 	authService := services.NewAuthService(db, cfg)
 	productService := services.NewProductService(db)
 	userService := services.NewUserService(db)
+	cartService := services.NewCartService(db)
+	orderService := services.NewOrderService(db)
 
 	var uploadProvider interfaces.UploadProvider
 	if cfg.Upload.UploadProvider == "s3" {
@@ -58,7 +60,17 @@ func main() {
 
 	uploadService := services.NewUploadService(uploadProvider)
 
-	serve := server.New(cfg, db, &log, authService, productService, userService, uploadService)
+	serve := server.New(
+		cfg,
+		db,
+		&log,
+		authService,
+		productService,
+		userService,
+		uploadService,
+		cartService,
+		orderService,
+	)
 
 	router := serve.SetupRoutes()
 
