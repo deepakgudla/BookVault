@@ -110,7 +110,6 @@ func (s *Server) SetupRoutes() *gin.Engine {
 				orderRoutes.POST("/orders", s.createOrder)
 				orderRoutes.GET("/", s.getOrders)
 				orderRoutes.GET("/:id", s.getOrder)
-
 			}
 		}
 

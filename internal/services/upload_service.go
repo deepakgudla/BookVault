@@ -19,7 +19,7 @@ func NewUploadService(provider interfaces.UploadProvider) *UploadService {
 }
 
 func (s *UploadService) UploadProductImage(productID uint, file *multipart.FileHeader) (string, error) {
-	ext := strings.ToLower(filepath.Ext(file.Filename)) //image extensions ()jpg, jpeg etc...
+	ext := strings.ToLower(filepath.Ext(file.Filename)) // image extensions ()jpg, jpeg etc...
 	if !isValidImageExt(ext) {
 		return "", fmt.Errorf("invalid file type: %s", ext)
 	}

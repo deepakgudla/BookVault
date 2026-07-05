@@ -166,9 +166,6 @@ func (s *Server) uploadProductImage(c *gin.Context) {
 		return
 	}
 
-	// uploadProvider := providers.NewLocalUploadProvider(s.config.Upload.Path)
-	// uploadService := services.NewUploadService(uploadProvider)
-
 	url, err := s.uploadService.UploadProductImage(uint(id), file)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to upload Image", err)
