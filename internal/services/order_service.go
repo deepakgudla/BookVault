@@ -68,7 +68,7 @@ func (s *OrderService) CreateOrder(userID int) (*dto.OrderResponse, error) {
 			return err
 		}
 
-		if err := tx.Where("cart_id=?", cart.ID).Delete(&models.CartItem{}).Error; err != nil {
+		if err := tx.Unscoped().Where("cart_id=?", cart.ID).Delete(&models.CartItem{}).Error; err != nil {
 			return err
 		}
 

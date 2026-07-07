@@ -1,0 +1,29 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A modern e-commerce API built with Go",
+        "title": "BookVault-API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Deepak Gudla",
+            "url": "https://www.linkedin.com/in/deepakgudla",
+            "email": "deepakgudla35@protonmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:1357",
+    "basePath": "/api",
+    "paths": {},
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Bearer and JWT token (bearer jwt_token)",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

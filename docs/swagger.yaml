@@ -1,0 +1,22 @@
+basePath: /api
+host: localhost:1357
+info:
+  contact:
+    email: deepakgudla35@protonmail.com
+    name: Deepak Gudla
+    url: https://www.linkedin.com/in/deepakgudla
+  description: A modern e-commerce API built with Go
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: BookVault-API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  BearerAuth:
+    description: Bearer and JWT token (bearer jwt_token)
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -18,7 +18,30 @@ import (
 	"github.com/deepakgudla/BookVault/internal/server"
 	"github.com/deepakgudla/BookVault/internal/services"
 	"github.com/gin-gonic/gin"
+
+	_ "github.com/deepakgudla/BookVault/docs"
 )
+
+// @title BookVault-API
+// @version 1.0
+// @description A modern e-commerce API built with Go
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name Deepak Gudla
+// @contact.url https://www.linkedin.com/in/deepakgudla
+// @contact.email deepakgudla35@protonmail.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:1357
+// @BasePath /api
+// @schemas http https
+
+// @securityDefinitions.apiKey BearerAuth
+// @in header
+// @name Authorization
+// @description Bearer and JWT token (bearer jwt_token)
 
 func main() {
 	log := logger.New()
