@@ -20,8 +20,14 @@ help:
 	@echo "make docker-reset    -    Stop Docker services and remove volumes"
 
 build:
+	@echo "Building all binaries..."
 	@mkdir -p $(BIN_DIR)
-	go build -o bin/app $(MAIN)
+	@for cmd in cmd/*/; do \
+		binary=$$(basename $$cmd); \
+		echo "Building $$binary..."; \
+		go build -o $(BIN_DIR)/$$binary ./$$cmd; \
+	done
+	
 
 run:  
 	go run $(MAIN)

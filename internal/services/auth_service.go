@@ -7,20 +7,23 @@ import (
 
 	"github.com/deepakgudla/BookVault/internal/config"
 	"github.com/deepakgudla/BookVault/internal/dto"
+	"github.com/deepakgudla/BookVault/internal/events"
 	"github.com/deepakgudla/BookVault/internal/models"
 	"github.com/deepakgudla/BookVault/internal/utils"
 	"gorm.io/gorm"
 )
 
 type AuthService struct {
-	db     *gorm.DB
-	config *config.Config
+	db             *gorm.DB
+	config         *config.Config
+	eventPublisher events.Publisher
 }
 
-func NewAuthService(db *gorm.DB, config *config.Config) *AuthService {
+func NewAuthService(db *gorm.DB, config *config.Config, eventPublisher events.Publisher) *AuthService {
 	return &AuthService{
-		db:     db,
-		config: config,
+		db:             db,
+		config:         config,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -112,6 +115,11 @@ func (s *AuthService) generateAuthResponse(user *models.User) (*dto.AuthResponse
 	}
 
 	s.db.Create(&refreshTokenModel)
+
+	err = s.eventPublisher.Publish("USER_LOGGED_IN", user, map[string]string{})
+	if err != nil {
+		return nil, fmt.Errorf("unable to publish user login event: %w", err)
+	}
 
 	return &dto.AuthResponse{
 		User: dto.UserResponse{

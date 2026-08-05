@@ -4,39 +4,122 @@ services:
     container_name: postgres_container
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password 
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: bookvault
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   cdn:
     image: nginx:alpine
     ports:
-    - 1350:80
+      - "1350:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ../uploads:/var/www/uploads
     depends_on:
-      - localstack
+      localstack:
+        condition: service_healthy
+
+  mailpit:
+    image: axllent/mailpit:v1.30
+    container_name: mailpit
+    restart: unless-stopped
+    volumes:
+      - mailpit_data:/data
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
   localstack:
     image: localstack/localstack:3.8
     container_name: localstack_container
     environment:
       - SERVICES=s3,sqs
-      - DEFAULT_REGION= ap-south-2
-      - DATA_DIR=/tmp/localstack/data
-      - AWS_ACCESS_KEY=test
-      - AWS_SECRET_KEY=test
+      - AWS_DEFAULT_REGION=ap-south-2
+      - PERSISTENCE=1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
     ports:
       - "4566:4566"
     volumes:
       - localstack_data:/var/lib/localstack
       - ./init/aws/init-localstack.sh:/etc/localstack/init/ready.d/init.sh
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 10s
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "1357:1357"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_NAME=bookvault
+      - AWS_S3_ENDPOINT=http://localstack:4566
+      - AWS_REGION=ap-south-2
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1025
+      - SMTP_FROM=noreply@vault.com
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_S3_BUCKET=bookvault-uploads
+      - AWS_EVENT_QUEUE_NAME=bookvault-events
+    command: ["./api"]
+
+  notifier:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_NAME=bookvault
+      - AWS_S3_ENDPOINT=http://localstack:4566
+      - AWS_REGION=ap-south-2
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1025
+      - AWS_ACCESS_KEY_ID=test
+      - SMTP_FROM=noreply@vault.com
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_S3_BUCKET=bookvault-uploads
+      - AWS_EVENT_QUEUE_NAME=bookvault-events
+    command: ["./notifier"]
 
 volumes:
   postgres_data:
   localstack_data:
-
+  mailpit_data:

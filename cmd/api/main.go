@@ -12,6 +12,7 @@ import (
 
 	"github.com/deepakgudla/BookVault/internal/config"
 	"github.com/deepakgudla/BookVault/internal/database"
+	"github.com/deepakgudla/BookVault/internal/events"
 	"github.com/deepakgudla/BookVault/internal/interfaces"
 	"github.com/deepakgudla/BookVault/internal/logger"
 	"github.com/deepakgudla/BookVault/internal/providers"
@@ -66,9 +67,17 @@ func main() {
 		}
 	}()
 
+	ctx := context.Background()
+
+	eventPublisher, err := events.NewEventPublisher(ctx, &cfg.AWS)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to create event publisher")
+		return
+	}
+
 	gin.SetMode(cfg.Server.GinMode)
 
-	authService := services.NewAuthService(db, cfg)
+	authService := services.NewAuthService(db, cfg, eventPublisher)
 	productService := services.NewProductService(db)
 	userService := services.NewUserService(db)
 	cartService := services.NewCartService(db)

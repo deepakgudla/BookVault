@@ -15,6 +15,7 @@ type Config struct {
 	JWT      JWTConfig
 	AWS      AWSConfig
 	Upload   UploadConfig
+	SMTP     SMTPConfig
 }
 
 // ServerConfig fields
@@ -42,11 +43,20 @@ type JWTConfig struct {
 
 // AWS configuration
 type AWSConfig struct {
-	Region     string
-	AccessKey  string
-	SecretKey  string
-	S3Bucket   string
-	S3Endpoint string
+	Region         string
+	AccessKey      string
+	SecretKey      string
+	S3Bucket       string
+	EventQueueName string
+	S3Endpoint     string
+}
+
+type SMTPConfig struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+	From     string
 }
 
 // Upload config
@@ -63,6 +73,7 @@ func Load() (*Config, error) {
 	jwtExpiresIn, _ := time.ParseDuration(getEnv("JWT_EXPIRES_IN", "24h"))
 	refreshTokenExpires, _ := time.ParseDuration((getEnv("REFRESH_TOKEN_EXPIRES_IN", "720h")))
 	maxUploadSize, _ := strconv.ParseInt(getEnv("MAX_UPLOAD_SIZE", "10485760"), 10, 64)
+	smtpPort, _ := strconv.Atoi(getEnv("SMTP_PORT", "1025"))
 
 	return &Config{
 		Server: ServerConfig{
@@ -83,16 +94,24 @@ func Load() (*Config, error) {
 			RefreshTokenExpires: refreshTokenExpires,
 		},
 		AWS: AWSConfig{
-			Region:     getEnv("REGION", ""),
-			AccessKey:  getEnv("ACCESS_KEY", "test"),
-			SecretKey:  getEnv("SECRET_KEY", "test"),
-			S3Bucket:   getEnv("S3BUCKET", "bookvault-uploads"),
-			S3Endpoint: getEnv("S3ENDPOINT", "http://localhost:4566"),
+			Region:         getEnv("AWS_REGION", ""),
+			AccessKey:      getEnv("AWS_ACCESS_KEY_ID", "test"),
+			SecretKey:      getEnv("AWS_SECRET_ACCESS_KEY", "test"),
+			S3Bucket:       getEnv("AWS_S3_BUCKET", "bookvault-uploads"),
+			S3Endpoint:     getEnv("AWS_S3_ENDPOINT", "http://localhost:4566"),
+			EventQueueName: getEnv("AWS_EVENT_QUEUE_NAME", "bookvault-events"),
 		},
 		Upload: UploadConfig{
 			Path:           getEnv("UPLOAD_PATH", "./uploads"),
 			MaxFileSize:    maxUploadSize,
 			UploadProvider: getEnv("UPLOAD_PROVIDER", "local"), // change it to S3 later on
+		},
+		SMTP: SMTPConfig{
+			Host:     getEnv("SMTP_HOST", "localhost"),
+			Port:     smtpPort,
+			Username: getEnv("SMTP_USERNAME", ""),
+			Password: getEnv("SMTP_PASSWORD", ""),
+			From:     getEnv("SMTP_FROM", "noreply@vault.com"),
 		},
 	}, nil
 
