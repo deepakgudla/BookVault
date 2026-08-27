@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/deepakgudla/BookVault/internal/config"
+	"github.com/deepakgudla/bookvault/internal/config"
 	"github.com/golang-jwt/jwt/v5"
 )
 

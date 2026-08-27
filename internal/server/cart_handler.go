@@ -3,8 +3,8 @@ package server
 import (
 	"strconv"
 
-	"github.com/deepakgudla/BookVault/internal/dto"
-	"github.com/deepakgudla/BookVault/internal/utils"
+	"github.com/deepakgudla/bookvault/internal/dto"
+	"github.com/deepakgudla/bookvault/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 

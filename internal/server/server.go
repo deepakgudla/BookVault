@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
-	"github.com/deepakgudla/BookVault/internal/config"
-	"github.com/deepakgudla/BookVault/internal/services"
+	"github.com/deepakgudla/bookvault/internal/config"
+	"github.com/deepakgudla/bookvault/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"

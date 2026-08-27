@@ -18,6 +18,7 @@ help:
 	@echo "make docker-up       -    Start Docker services"
 	@echo "make docker-down     -    Stop Docker services"	
 	@echo "make docker-reset    -    Stop Docker services and remove volumes"
+	@echo "make generate-graph" -    Starts generating graphql schema 
 
 build:
 	@echo "Building all binaries..."
@@ -63,4 +64,8 @@ docker-down:
 
 docker-reset:
 	docker compose -f $(COMPOSE_FILE) down -v
+
+generate-graph:
+	@go get github.com/99designs/gqlgen@v0.17.94
+	@go run github.com/99designs/gqlgen generate
 

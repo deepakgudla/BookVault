@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/deepakgudla/BookVault/internal/dto"
-	"github.com/deepakgudla/BookVault/internal/models"
+	"github.com/deepakgudla/bookvault/internal/dto"
+	"github.com/deepakgudla/bookvault/internal/models"
 	"gorm.io/gorm"
 )
 

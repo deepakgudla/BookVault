@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/deepakgudla/BookVault/internal/config"
+	"github.com/deepakgudla/bookvault/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

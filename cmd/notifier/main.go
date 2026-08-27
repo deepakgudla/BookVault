@@ -11,10 +11,10 @@ import (
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill-aws/sqs"
 	"github.com/ThreeDotsLabs/watermill/message"
-	"github.com/deepakgudla/BookVault/internal/config"
-	"github.com/deepakgudla/BookVault/internal/models"
-	"github.com/deepakgudla/BookVault/internal/providers"
-	"github.com/deepakgudla/BookVault/notifications"
+	"github.com/deepakgudla/bookvault/internal/config"
+	"github.com/deepakgudla/bookvault/internal/models"
+	"github.com/deepakgudla/bookvault/internal/providers"
+	"github.com/deepakgudla/bookvault/notifications"
 )
 
 func main() {

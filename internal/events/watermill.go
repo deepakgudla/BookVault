@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/deepakgudla/BookVault/internal/providers"
+	"github.com/deepakgudla/bookvault/internal/providers"
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill-aws/sqs"
 	"github.com/ThreeDotsLabs/watermill/message"
 
 	_ "github.com/aws/smithy-go/endpoints"
-	appconfig "github.com/deepakgudla/BookVault/internal/config"
+	appconfig "github.com/deepakgudla/bookvault/internal/config"
 )
 
 type EventPublisher struct {

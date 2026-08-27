@@ -12,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
-	appConfig "github.com/deepakgudla/BookVault/internal/config"
+	appConfig "github.com/deepakgudla/bookvault/internal/config"
 )
 
 type S3Provider struct {

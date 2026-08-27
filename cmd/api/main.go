@@ -10,20 +10,20 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/deepakgudla/BookVault/internal/config"
-	"github.com/deepakgudla/BookVault/internal/database"
-	"github.com/deepakgudla/BookVault/internal/events"
-	"github.com/deepakgudla/BookVault/internal/interfaces"
-	"github.com/deepakgudla/BookVault/internal/logger"
-	"github.com/deepakgudla/BookVault/internal/providers"
-	"github.com/deepakgudla/BookVault/internal/server"
-	"github.com/deepakgudla/BookVault/internal/services"
+	"github.com/deepakgudla/bookvault/internal/config"
+	"github.com/deepakgudla/bookvault/internal/database"
+	"github.com/deepakgudla/bookvault/internal/events"
+	"github.com/deepakgudla/bookvault/internal/interfaces"
+	"github.com/deepakgudla/bookvault/internal/logger"
+	"github.com/deepakgudla/bookvault/internal/providers"
+	"github.com/deepakgudla/bookvault/internal/server"
+	"github.com/deepakgudla/bookvault/internal/services"
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/deepakgudla/BookVault/docs"
+	_ "github.com/deepakgudla/bookvault/docs"
 )
 
-// @title BookVault-API
+// @title bookvault-API
 // @version 1.0
 // @description A modern e-commerce API built with Go
 // @termsOfService http://swagger.io/terms/

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/deepakgudla/BookVault/internal/interfaces"
+	"github.com/deepakgudla/bookvault/internal/interfaces"
 	"github.com/google/uuid"
 )
 

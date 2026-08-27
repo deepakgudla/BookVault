@@ -1,0 +1,67 @@
+schema:
+  - graph/schema/*.graphqls
+
+
+exec:
+  filename: graph/generated.go
+  package: graph
+
+model:
+  filename: graph/model/models_gen.go
+  package: model
+
+resolver:
+  layout: follow-schema
+  # follow-schema: creates seperate files per schema type (query, mutation etc..)
+  # single-file: puts all the resolvers in one file
+  dir: graph/resolver
+  package: resolver
+  filename_template: "{name}.resolvers.go"
+
+autobind:
+  - github.com/deepakgudla/bookvault/internal/dto
+
+models:
+  User:
+    model: github.com/deepakgudla/bookvault/internal/dto.UserResponse
+  AuthPayload:
+    model: github.com/deepakgudla/bookvault/internal/dto.AuthResponse
+  Product:
+    model: github.com/deepakgudla/bookvault/internal/dto.ProductResponse
+  Category:
+    model: github.com/deepakgudla/bookvault/internal/dto.CategoryResponse
+  Cart:
+    model: github.com/deepakgudla/bookvault/internal/dto.CartResponse
+  CartItem:
+    model: github.com/deepakgudla/bookvault/internal/dto.CartItemResponse
+  Order:
+    model: github.com/deepakgudla/bookvault/internal/dto.OrderResponse
+  OrderItem:
+    model: github.com/deepakgudla/bookvault/internal/dto.OrderItemResponse
+  ProductImage:
+    model: github.com/deepakgudla/bookvault/internal/dto.ProductImageResponse
+  
+  RegisterInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.RegisterRequest
+  LoginInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.LoginRequest
+  RefreshTokenInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.RefreshTokenRequest
+  UpdateProfileInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.UpdateProfileRequest
+  CreateCategoryInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.CreateCategoryRequest
+  UpdateCategoryInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.UpdateCategoryRequest
+  UpdateCartItemInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.UpdateCartItemRequest
+  CreateProductInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.CreateProductRequest
+  AddToCartInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.AddToCartRequest
+  ID:
+    model: github.com/99designs/gqlgen/graphql.String
+  UInt:
+    model: github.com/99designs/gqlgen/graphql.Uint
+  
+

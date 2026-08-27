@@ -3,8 +3,8 @@ package server
 import (
 	"strings"
 
-	"github.com/deepakgudla/BookVault/internal/models"
-	"github.com/deepakgudla/BookVault/internal/utils"
+	"github.com/deepakgudla/bookvault/internal/models"
+	"github.com/deepakgudla/bookvault/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 

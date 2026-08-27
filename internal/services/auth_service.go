@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/deepakgudla/BookVault/internal/config"
-	"github.com/deepakgudla/BookVault/internal/dto"
-	"github.com/deepakgudla/BookVault/internal/events"
-	"github.com/deepakgudla/BookVault/internal/models"
-	"github.com/deepakgudla/BookVault/internal/utils"
+	"github.com/deepakgudla/bookvault/internal/config"
+	"github.com/deepakgudla/bookvault/internal/dto"
+	"github.com/deepakgudla/bookvault/internal/events"
+	"github.com/deepakgudla/bookvault/internal/models"
+	"github.com/deepakgudla/bookvault/internal/utils"
 	"gorm.io/gorm"
 )
 

@@ -1787,7 +1787,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:1357",
 	BasePath:         "/api",
 	Schemes:          []string{},
-	Title:            "BookVault-API",
+	Title:            "bookvault-API",
 	Description:      "A modern e-commerce API built with Go",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
