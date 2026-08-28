@@ -1,7 +1,6 @@
 schema:
   - graph/schema/*.graphqls
 
-
 exec:
   filename: graph/generated.go
   package: graph
@@ -12,8 +11,6 @@ model:
 
 resolver:
   layout: follow-schema
-  # follow-schema: creates seperate files per schema type (query, mutation etc..)
-  # single-file: puts all the resolvers in one file
   dir: graph/resolver
   package: resolver
   filename_template: "{name}.resolvers.go"
@@ -40,7 +37,7 @@ models:
     model: github.com/deepakgudla/bookvault/internal/dto.OrderItemResponse
   ProductImage:
     model: github.com/deepakgudla/bookvault/internal/dto.ProductImageResponse
-  
+
   RegisterInput:
     model: github.com/deepakgudla/bookvault/internal/dto.RegisterRequest
   LoginInput:
@@ -53,15 +50,15 @@ models:
     model: github.com/deepakgudla/bookvault/internal/dto.CreateCategoryRequest
   UpdateCategoryInput:
     model: github.com/deepakgudla/bookvault/internal/dto.UpdateCategoryRequest
-  UpdateCartItemInput:
-    model: github.com/deepakgudla/bookvault/internal/dto.UpdateCartItemRequest
   CreateProductInput:
     model: github.com/deepakgudla/bookvault/internal/dto.CreateProductRequest
+  UpdateProductInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.UpdateProductRequest
   AddToCartInput:
     model: github.com/deepakgudla/bookvault/internal/dto.AddToCartRequest
+  UpdateCartItemInput:
+    model: github.com/deepakgudla/bookvault/internal/dto.UpdateCartItemRequest
   ID:
     model: github.com/99designs/gqlgen/graphql.String
   UInt:
     model: github.com/99designs/gqlgen/graphql.Uint
-  
-

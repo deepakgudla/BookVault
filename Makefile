@@ -1,4 +1,4 @@
-.PHONY: help build run clean dev lint format migrate-up migrate-down docs-generate docker-up docker-down docker-reset
+.PHONY: help build run clean dev lint format migrate-up migrate-down docs-generate docker-up docker-down docker build docker-reset
 
 BIN_DIR := bin
 DB_URL := postgresql://postgres:password@localhost:5433/bookvault?sslmode=disable
@@ -16,9 +16,10 @@ help:
 	@echo "make migrate-up      -    Apply db migration"
 	@echo "make migrate-down    -    Rollback database migration"
 	@echo "make docker-up       -    Start Docker services"
-	@echo "make docker-down     -    Stop Docker services"	
+	@echo "make docker-down     -    Stop Docker services"
+	@echo "make docker-build    -    Build updated Go application"
 	@echo "make docker-reset    -    Stop Docker services and remove volumes"
-	@echo "make generate-graph" -    Starts generating graphql schema 
+	@echo "make generate-graph  -    Starts generating graphql schema"
 
 build:
 	@echo "Building all binaries..."
@@ -61,6 +62,9 @@ docker-up:
 
 docker-down:
 	docker compose -f $(COMPOSE_FILE) down
+
+docker-build:
+    docker compose -f $(COMPOSE_FILE) build
 
 docker-reset:
 	docker compose -f $(COMPOSE_FILE) down -v

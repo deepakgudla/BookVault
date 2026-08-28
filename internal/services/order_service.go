@@ -3,7 +3,6 @@ package services
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/deepakgudla/bookvault/internal/dto"
 	"github.com/deepakgudla/bookvault/internal/models"
@@ -186,6 +185,6 @@ func (s *OrderService) convertToOrderResponse(order *models.Order) dto.OrderResp
 		Status:      string(order.Status),
 		TotalAmount: order.TotalAmount,
 		OrderItems:  orderItems,
-		CreatedAT:   order.CreatedAt.Format(time.RFC3339),
+		CreatedAt:   order.CreatedAt,
 	}
 }

@@ -136,14 +136,14 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, input dto.CreatePr
 }
 
 // UpdateProduct is the resolver for the updateProduct field.
-func (r *mutationResolver) UpdateProduct(ctx context.Context, id string, input model.UpdateProductInput) (*dto.ProductResponse, error) {
+func (r *mutationResolver) UpdateProduct(ctx context.Context, id string, input dto.UpdateProductRequest) (*dto.ProductResponse, error) {
 	if !IsAdminFromContext(ctx) {
 		return nil, ErrUnauthorized
 	}
 
 	productID, err := r.parseID(id)
 	if err != nil {
-		return nil, fmt.Errorf("invalid produuct ID: %w", err)
+		return nil, fmt.Errorf("invalid product ID: %w", err)
 	}
 
 	product, err := r.productService.UpdateProduct(productID, &input)
@@ -233,15 +233,14 @@ func (r *mutationResolver) CreateOrder(ctx context.Context) (*dto.OrderResponse,
 	userID, err := GetUserIDFromContext(ctx)
 	if err != nil {
 		return nil, ErrUnauthorized
-
-		order, err := r.orderService.CreateOrder(int(userID))
-		if err != nil {
-			return nil, fmt.Errorf("failed to create order: %w", err)
-		}
-
-		return order, nil
-
 	}
+
+	order, err := r.orderService.CreateOrder(int(userID))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create order: %w", err)
+	}
+
+	return order, nil
 }
 
 // Me is the resolver for the me field.
@@ -392,26 +391,3 @@ type (
 	mutationResolver struct{ *Resolver }
 	queryResolver    struct{ *Resolver }
 )
-
-func GetPagingNumbers(page *int, limit *int) (int, int) {
-	p := 1
-	l := 10
-
-	if page != nil {
-		p = *page
-	}
-
-	if limit != nil {
-		l = *limit
-	}
-
-	if p <= 0 {
-		p = 1
-	}
-
-	if l <= 0 {
-		l = 10
-	}
-
-	return p, l
-}

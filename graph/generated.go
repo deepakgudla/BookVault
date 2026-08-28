@@ -87,7 +87,7 @@ type ComplexityRoot struct {
 		RemoveFromCart func(childComplexity int, id string) int
 		UpdateCartItem func(childComplexity int, id string, input dto.UpdateCartItemRequest) int
 		UpdateCategory func(childComplexity int, id string, input dto.UpdateCategoryRequest) int
-		UpdateProduct  func(childComplexity int, id string, input model.UpdateProductInput) int
+		UpdateProduct  func(childComplexity int, id string, input dto.UpdateProductRequest) int
 		UpdateProfile  func(childComplexity int, input dto.UpdateProfileRequest) int
 	}
 
@@ -197,7 +197,7 @@ type MutationResolver interface {
 	UpdateCategory(ctx context.Context, id string, input dto.UpdateCategoryRequest) (*dto.CategoryResponse, error)
 	DeleteCategory(ctx context.Context, id string) (bool, error)
 	CreateProduct(ctx context.Context, input dto.CreateProductRequest) (*dto.ProductResponse, error)
-	UpdateProduct(ctx context.Context, id string, input model.UpdateProductInput) (*dto.ProductResponse, error)
+	UpdateProduct(ctx context.Context, id string, input dto.UpdateProductRequest) (*dto.ProductResponse, error)
 	DeleteProduct(ctx context.Context, id string) (bool, error)
 	AddToCart(ctx context.Context, input dto.AddToCartRequest) (*dto.CartResponse, error)
 	UpdateCartItem(ctx context.Context, id string, input dto.UpdateCartItemRequest) (*dto.CartResponse, error)
@@ -491,7 +491,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.ComplexityRoot.Mutation.UpdateProduct(childComplexity, args["id"].(string), args["input"].(model.UpdateProductInput)), true
+		return e.ComplexityRoot.Mutation.UpdateProduct(childComplexity, args["id"].(string), args["input"].(dto.UpdateProductRequest)), true
 	case "Mutation.updateProfile":
 		if e.ComplexityRoot.Mutation.UpdateProfile == nil {
 			break
@@ -1447,8 +1447,8 @@ func (ec *executionContext) field_Mutation_updateProduct_args(ctx context.Contex
 	}
 	args["id"] = arg0
 	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
-		func(ctx context.Context, v any) (model.UpdateProductInput, error) {
-			return ec.unmarshalNUpdateProductInput2githubᚗcomᚋdeepakgudlaᚋbookvaultᚋgraphᚋmodelᚐUpdateProductInput(ctx, v)
+		func(ctx context.Context, v any) (dto.UpdateProductRequest, error) {
+			return ec.unmarshalNUpdateProductInput2githubᚗcomᚋdeepakgudlaᚋbookvaultᚋinternalᚋdtoᚐUpdateProductRequest(ctx, v)
 		})
 	if err != nil {
 		return nil, err
@@ -2395,7 +2395,7 @@ func (ec *executionContext) _Mutation_updateProduct(ctx context.Context, field g
 		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.Resolvers.Mutation().UpdateProduct(ctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateProductInput))
+			return ec.Resolvers.Mutation().UpdateProduct(ctx, fc.Args["id"].(string), fc.Args["input"].(dto.UpdateProductRequest))
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *dto.ProductResponse) graphql.Marshaler {
@@ -2770,7 +2770,7 @@ func (ec *executionContext) _Order_created_at(ctx context.Context, field graphql
 			return ec.fieldContext_Order_created_at(ctx, field)
 		},
 		func(ctx context.Context) (any, error) {
-			return obj.CreatedAT, nil
+			return obj.CreatedAt, nil
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
@@ -5415,8 +5415,8 @@ func (ec *executionContext) unmarshalInputUpdateCategoryInput(ctx context.Contex
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateProductInput(ctx context.Context, obj any) (model.UpdateProductInput, error) {
-	var it model.UpdateProductInput
+func (ec *executionContext) unmarshalInputUpdateProductInput(ctx context.Context, obj any) (dto.UpdateProductRequest, error) {
+	var it dto.UpdateProductRequest
 	if obj == nil {
 		return it, nil
 	}
@@ -7756,7 +7756,7 @@ func (ec *executionContext) unmarshalNUpdateCategoryInput2githubᚗcomᚋdeepakg
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateProductInput2githubᚗcomᚋdeepakgudlaᚋbookvaultᚋgraphᚋmodelᚐUpdateProductInput(ctx context.Context, v any) (model.UpdateProductInput, error) {
+func (ec *executionContext) unmarshalNUpdateProductInput2githubᚗcomᚋdeepakgudlaᚋbookvaultᚋinternalᚋdtoᚐUpdateProductRequest(ctx context.Context, v any) (dto.UpdateProductRequest, error) {
 	res, err := ec.unmarshalInputUpdateProductInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }

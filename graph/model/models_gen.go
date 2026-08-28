@@ -36,12 +36,3 @@ type ProductEdge struct {
 
 type Query struct {
 }
-
-type UpdateProductInput struct {
-	CategoryID  uint    `json:"category_id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
-	Stock       int     `json:"stock"`
-	IsActive    *bool   `json:"is_active,omitempty"`
-}
