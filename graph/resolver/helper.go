@@ -3,6 +3,8 @@ package resolver
 import (
 	"context"
 	"errors"
+
+	"github.com/deepakgudla/bookvault/internal/utils"
 )
 
 var (
@@ -10,7 +12,7 @@ var (
 )
 
 func GetUserIDFromContext(ctx context.Context) (uint, error) {
-	userID := ctx.Value("user_id")
+	userID := ctx.Value(utils.UserIDKey)
 	if userID == nil {
 		return 0, ErrUnauthorized
 	}
@@ -23,7 +25,7 @@ func GetUserIDFromContext(ctx context.Context) (uint, error) {
 }
 
 func GetUserRoleFromContext(ctx context.Context) (string, error) {
-	userRole := ctx.Value("user_role")
+	userRole := ctx.Value(utils.UserRoleKey)
 	if userRole == nil {
 		return "", ErrUnauthorized
 	}
@@ -45,7 +47,7 @@ func IsAdminFromContext(ctx context.Context) bool {
 
 }
 
-func GetPagingNumbers(page *int, limit *int) (int, int) {
+func GetPagingNumbers(page, limit *int) (pageNUmber, pageLimit int) {
 	p := 1
 	l := 10
 

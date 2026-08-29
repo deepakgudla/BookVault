@@ -1,4 +1,4 @@
-.PHONY: help build run clean dev lint format migrate-up migrate-down docs-generate docker-up docker-down docker build docker-reset
+.PHONY: help build run clean dev lint format migrate-up migrate-down docs-generate docker-up docker-down docker-build docker-reset
 
 BIN_DIR := bin
 DB_URL := postgresql://postgres:password@localhost:5433/bookvault?sslmode=disable
@@ -62,9 +62,9 @@ docker-up:
 
 docker-down:
 	docker compose -f $(COMPOSE_FILE) down
-
+	
 docker-build:
-    docker compose -f $(COMPOSE_FILE) build
+	docker compose -f $(COMPOSE_FILE) build
 
 docker-reset:
 	docker compose -f $(COMPOSE_FILE) down -v

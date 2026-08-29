@@ -10,6 +10,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/deepakgudla/bookvault/graph"
 	"github.com/deepakgudla/bookvault/graph/resolver"
+	"github.com/deepakgudla/bookvault/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -74,20 +75,42 @@ func (s *Server) playgroundProtectedHandler() gin.HandlerFunc {
 	}
 }
 
+// graphqlMiddleware is for the PROTECTED endpoint — auth is guaranteed by authMiddleware() beforehand.
 func (s *Server) graphqlMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
-		userID, _ := c.Get("user_id")
+		userID, exists := c.Get("user_id")
+		if !exists {
+			c.AbortWithStatusJSON(401, gin.H{"error": "user_id not found in Gin context"})
+			return
+		}
 		userEmail, _ := c.Get("user_email")
 		userRole, _ := c.Get("user_role")
 
-		ctx := context.WithValue(c.Request.Context(), "user_id", userID)
-		ctx = context.WithValue(c.Request.Context(), "user_email", userEmail)
-		ctx = context.WithValue(c.Request.Context(), "user_role", userRole)
-
+		ctx := context.WithValue(c.Request.Context(), utils.UserIDKey, userID)
+		ctx = context.WithValue(ctx, utils.UserEmailKey, userEmail)
+		ctx = context.WithValue(ctx, utils.UserRoleKey, userRole)
 		c.Request = c.Request.WithContext(ctx)
-
+		ctx = context.WithValue(ctx, utils.GinContextKey, c)
 		c.Next()
+	}
+}
 
+// graphqlPublicMiddleware is for the PUBLIC endpoint — auth is optional.
+// Resolvers that require a user (Me, Cart, Orders, mutations, etc.) will
+// still fail via GetUserIDFromContext, but public fields like products/categories work fine.
+func (s *Server) graphqlPublicMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+		if userID, exists := c.Get("user_id"); exists {
+			ctx = context.WithValue(ctx, "user_id", userID)
+		}
+		if userEmail, exists := c.Get("user_email"); exists {
+			ctx = context.WithValue(ctx, "user_email", userEmail)
+		}
+		if userRole, exists := c.Get("user_role"); exists {
+			ctx = context.WithValue(ctx, "user_role", userRole)
+		}
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
 	}
 }

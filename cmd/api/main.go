@@ -94,7 +94,7 @@ func main() {
 
 	serve := server.New(
 		cfg,
-		db,
+		// db,
 		&log,
 		authService,
 		productService,

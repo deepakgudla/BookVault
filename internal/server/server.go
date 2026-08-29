@@ -7,37 +7,36 @@ import (
 	"github.com/deepakgudla/bookvault/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	"gorm.io/gorm"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server struct {
-	config         *config.Config
-	db             *gorm.DB
+	config *config.Config
+	// db             *gorm.DB
 	logger         *zerolog.Logger
-	authService    *services.AuthService
-	productService *services.ProductService
-	userService    *services.UserService
-	uploadService  *services.UploadService
-	cartService    *services.CartService
-	orderService   *services.OrderService
+	authService    services.AuthServiceInterace
+	productService services.ProductServiceInterface
+	userService    services.UserServiceInterface
+	uploadService  services.UploadServiceInterface
+	cartService    services.CartServiceInterface
+	orderService   services.OrderServiceInterface
 }
 
 func New(cfg *config.Config,
-	db *gorm.DB,
+	// db *gorm.DB,
 	logger *zerolog.Logger,
-	authService *services.AuthService,
-	productService *services.ProductService,
-	userService *services.UserService,
-	uploadService *services.UploadService,
-	cartService *services.CartService,
-	orderService *services.OrderService,
+	authService services.AuthServiceInterace,
+	productService services.ProductServiceInterface,
+	userService services.UserServiceInterface,
+	uploadService services.UploadServiceInterface,
+	cartService services.CartServiceInterface,
+	orderService services.OrderServiceInterface,
 ) *Server {
 	return &Server{
-		config:         cfg,
-		db:             db,
+		config: cfg,
+		// db:             db,
 		logger:         logger,
 		authService:    authService,
 		productService: productService,
@@ -72,7 +71,7 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	router.GET("/playground/protected", s.playgroundProtectedHandler())
 
 	graphqlPublic := router.Group("/graphql/public")
-	graphqlPublic.Use(s.graphqlMiddleware())
+	graphqlPublic.Use(s.graphqlPublicMiddleware())
 	graphqlPublic.POST("/", s.graphqlHandler())
 
 	graphqlProtected := router.Group("/graphql")

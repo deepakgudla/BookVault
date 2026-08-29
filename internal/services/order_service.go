@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var _ OrderServiceInterface = (*OrderService)(nil)
+
 type OrderService struct {
 	db *gorm.DB
 }
@@ -18,7 +20,7 @@ func NewOrderService(db *gorm.DB) *OrderService {
 	return &OrderService{db: db}
 }
 
-func (s *OrderService) CreateOrder(userID int) (*dto.OrderResponse, error) {
+func (s *OrderService) CreateOrder(userID uint) (*dto.OrderResponse, error) {
 	var orderResponse *dto.OrderResponse
 
 	err := s.db.Transaction(func(tx *gorm.DB) error {
@@ -157,9 +159,7 @@ func (s *OrderService) convertToOrderResponse(order *models.Order) dto.OrderResp
 		item := order.OrderItems[i]
 
 		orderItems[i] = dto.OrderItemResponse{
-			ID:       item.ID,
-			Quantity: item.Quantity,
-			Price:    item.Price,
+			ID: item.ID,
 			Product: dto.ProductResponse{
 				ID:          item.Product.ID,
 				CategoryID:  item.Product.CategoryID,
@@ -176,6 +176,10 @@ func (s *OrderService) convertToOrderResponse(order *models.Order) dto.OrderResp
 					IsActive:    item.Product.Category.IsActive,
 				},
 			},
+			Quantity: item.Quantity,
+			Price:    item.Price,
+
+			CreatedAt: item.CreatedAt,
 		}
 	}
 
@@ -186,5 +190,6 @@ func (s *OrderService) convertToOrderResponse(order *models.Order) dto.OrderResp
 		TotalAmount: order.TotalAmount,
 		OrderItems:  orderItems,
 		CreatedAt:   order.CreatedAt,
+		UpdatedAt:   order.UpdatedAt,
 	}
 }

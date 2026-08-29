@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 )
 
+var _ UploadServiceInterface = (*UploadService)(nil)
+
 type UploadService struct {
 	provider interfaces.UploadProvider
 }

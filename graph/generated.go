@@ -11,6 +11,7 @@ import (
 	"math"
 	"strconv"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -54,23 +55,29 @@ type ComplexityRoot struct {
 
 	Cart struct {
 		CartItems func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Total     func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 		UserID    func(childComplexity int) int
 	}
 
 	CartItem struct {
-		ID       func(childComplexity int) int
-		Product  func(childComplexity int) int
-		Quantity func(childComplexity int) int
-		SubTotal func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Product   func(childComplexity int) int
+		Quantity  func(childComplexity int) int
+		SubTotal  func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 
 	Category struct {
+		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		IsActive    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -92,11 +99,12 @@ type ComplexityRoot struct {
 	}
 
 	Order struct {
-		CreatedAT   func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
 		ID          func(childComplexity int) int
 		OrderItems  func(childComplexity int) int
 		Status      func(childComplexity int) int
 		TotalAmount func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
 		UserID      func(childComplexity int) int
 	}
 
@@ -110,10 +118,11 @@ type ComplexityRoot struct {
 	}
 
 	OrderItem struct {
-		ID       func(childComplexity int) int
-		Price    func(childComplexity int) int
-		Product  func(childComplexity int) int
-		Quantity func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Price     func(childComplexity int) int
+		Product   func(childComplexity int) int
+		Quantity  func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -126,6 +135,7 @@ type ComplexityRoot struct {
 	Product struct {
 		Category    func(childComplexity int) int
 		CategoryID  func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Images      func(childComplexity int) int
@@ -134,6 +144,7 @@ type ComplexityRoot struct {
 		Price       func(childComplexity int) int
 		SKU         func(childComplexity int) int
 		Stock       func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
 	}
 
 	ProductConnection struct {
@@ -147,6 +158,7 @@ type ComplexityRoot struct {
 
 	ProductImage struct {
 		AltText   func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
 		IsPrimary func(childComplexity int) int
 		URL       func(childComplexity int) int
@@ -163,6 +175,7 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
+		CreatedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
 		FirstName func(childComplexity int) int
 		ID        func(childComplexity int) int
@@ -170,6 +183,7 @@ type ComplexityRoot struct {
 		LastName  func(childComplexity int) int
 		Phone     func(childComplexity int) int
 		Role      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 }
 
@@ -274,6 +288,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Cart.CartItems(childComplexity), true
+	case "Cart.created_at":
+		if e.ComplexityRoot.Cart.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Cart.CreatedAt(childComplexity), true
 	case "Cart.id":
 		if e.ComplexityRoot.Cart.ID == nil {
 			break
@@ -286,6 +306,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Cart.Total(childComplexity), true
+	case "Cart.updated_at":
+		if e.ComplexityRoot.Cart.UpdatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Cart.UpdatedAt(childComplexity), true
 	case "Cart.user_id":
 		if e.ComplexityRoot.Cart.UserID == nil {
 			break
@@ -293,6 +319,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.Cart.UserID(childComplexity), true
 
+	case "CartItem.created_at":
+		if e.ComplexityRoot.CartItem.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.CartItem.CreatedAt(childComplexity), true
 	case "CartItem.id":
 		if e.ComplexityRoot.CartItem.ID == nil {
 			break
@@ -317,7 +349,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.CartItem.SubTotal(childComplexity), true
+	case "CartItem.updated_at":
+		if e.ComplexityRoot.CartItem.UpdatedAt == nil {
+			break
+		}
 
+		return e.ComplexityRoot.CartItem.UpdatedAt(childComplexity), true
+
+	case "Category.created_at":
+		if e.ComplexityRoot.Category.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Category.CreatedAt(childComplexity), true
 	case "Category.description":
 		if e.ComplexityRoot.Category.Description == nil {
 			break
@@ -342,6 +386,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Category.Name(childComplexity), true
+	case "Category.updated_at":
+		if e.ComplexityRoot.Category.UpdatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Category.UpdatedAt(childComplexity), true
 
 	case "Mutation.addToCart":
 		if e.ComplexityRoot.Mutation.AddToCart == nil {
@@ -505,11 +555,11 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		return e.ComplexityRoot.Mutation.UpdateProfile(childComplexity, args["input"].(dto.UpdateProfileRequest)), true
 
 	case "Order.created_at":
-		if e.ComplexityRoot.Order.CreatedAT == nil {
+		if e.ComplexityRoot.Order.CreatedAt == nil {
 			break
 		}
 
-		return e.ComplexityRoot.Order.CreatedAT(childComplexity), true
+		return e.ComplexityRoot.Order.CreatedAt(childComplexity), true
 	case "Order.id":
 		if e.ComplexityRoot.Order.ID == nil {
 			break
@@ -534,6 +584,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Order.TotalAmount(childComplexity), true
+	case "Order.updated_at":
+		if e.ComplexityRoot.Order.UpdatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Order.UpdatedAt(childComplexity), true
 	case "Order.user_id":
 		if e.ComplexityRoot.Order.UserID == nil {
 			break
@@ -561,6 +617,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.OrderEdge.Node(childComplexity), true
 
+	case "OrderItem.created_at":
+		if e.ComplexityRoot.OrderItem.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.OrderItem.CreatedAt(childComplexity), true
 	case "OrderItem.id":
 		if e.ComplexityRoot.OrderItem.ID == nil {
 			break
@@ -623,6 +685,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Product.CategoryID(childComplexity), true
+	case "Product.created_at":
+		if e.ComplexityRoot.Product.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Product.CreatedAt(childComplexity), true
 	case "Product.description":
 		if e.ComplexityRoot.Product.Description == nil {
 			break
@@ -671,6 +739,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Product.Stock(childComplexity), true
+	case "Product.updated_at":
+		if e.ComplexityRoot.Product.UpdatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Product.UpdatedAt(childComplexity), true
 
 	case "ProductConnection.edges":
 		if e.ComplexityRoot.ProductConnection.Edges == nil {
@@ -698,6 +772,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.ProductImage.AltText(childComplexity), true
+	case "ProductImage.created_at":
+		if e.ComplexityRoot.ProductImage.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ProductImage.CreatedAt(childComplexity), true
 	case "ProductImage.id":
 		if e.ComplexityRoot.ProductImage.ID == nil {
 			break
@@ -781,6 +861,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.Query.Products(childComplexity, args["page"].(*int), args["limit"].(*int)), true
 
+	case "User.created_at":
+		if e.ComplexityRoot.User.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.User.CreatedAt(childComplexity), true
 	case "User.email":
 		if e.ComplexityRoot.User.Email == nil {
 			break
@@ -823,6 +909,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.User.Role(childComplexity), true
+	case "User.updated_at":
+		if e.ComplexityRoot.User.UpdatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.User.UpdatedAt(childComplexity), true
 
 	}
 	return 0, false
@@ -961,6 +1053,10 @@ func (ec *executionContext) childFields_Cart(ctx context.Context, field graphql.
 		return ec.fieldContext_Cart_cart_items(ctx, field)
 	case "total":
 		return ec.fieldContext_Cart_total(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Cart_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Cart_updated_at(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Cart", field.Name)
 }
@@ -975,6 +1071,10 @@ func (ec *executionContext) childFields_CartItem(ctx context.Context, field grap
 		return ec.fieldContext_CartItem_quantity(ctx, field)
 	case "subtotal":
 		return ec.fieldContext_CartItem_subtotal(ctx, field)
+	case "created_at":
+		return ec.fieldContext_CartItem_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_CartItem_updated_at(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type CartItem", field.Name)
 }
@@ -989,6 +1089,10 @@ func (ec *executionContext) childFields_Category(ctx context.Context, field grap
 		return ec.fieldContext_Category_description(ctx, field)
 	case "is_active":
 		return ec.fieldContext_Category_is_active(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Category_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Category_updated_at(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Category", field.Name)
 }
@@ -1007,6 +1111,8 @@ func (ec *executionContext) childFields_Order(ctx context.Context, field graphql
 		return ec.fieldContext_Order_order_items(ctx, field)
 	case "created_at":
 		return ec.fieldContext_Order_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Order_updated_at(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Order", field.Name)
 }
@@ -1039,6 +1145,8 @@ func (ec *executionContext) childFields_OrderItem(ctx context.Context, field gra
 		return ec.fieldContext_OrderItem_quantity(ctx, field)
 	case "price":
 		return ec.fieldContext_OrderItem_price(ctx, field)
+	case "created_at":
+		return ec.fieldContext_OrderItem_created_at(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type OrderItem", field.Name)
 }
@@ -1079,6 +1187,10 @@ func (ec *executionContext) childFields_Product(ctx context.Context, field graph
 		return ec.fieldContext_Product_category(ctx, field)
 	case "images":
 		return ec.fieldContext_Product_images(ctx, field)
+	case "created_at":
+		return ec.fieldContext_Product_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_Product_updated_at(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Product", field.Name)
 }
@@ -1111,6 +1223,8 @@ func (ec *executionContext) childFields_ProductImage(ctx context.Context, field 
 		return ec.fieldContext_ProductImage_alt_text(ctx, field)
 	case "is_primary":
 		return ec.fieldContext_ProductImage_is_primary(ctx, field)
+	case "created_at":
+		return ec.fieldContext_ProductImage_created_at(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type ProductImage", field.Name)
 }
@@ -1131,6 +1245,10 @@ func (ec *executionContext) childFields_User(ctx context.Context, field graphql.
 		return ec.fieldContext_User_role(ctx, field)
 	case "is_active":
 		return ec.fieldContext_User_is_active(ctx, field)
+	case "created_at":
+		return ec.fieldContext_User_created_at(ctx, field)
+	case "updated_at":
+		return ec.fieldContext_User_updated_at(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 }
@@ -1796,6 +1914,52 @@ func (ec *executionContext) fieldContext_Cart_total(_ context.Context, field gra
 	return graphql.NewScalarFieldContext("Cart", field, false, false, errors.New("field of type Float does not have child fields"))
 }
 
+func (ec *executionContext) _Cart_created_at(ctx context.Context, field graphql.CollectedField, obj *dto.CartResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Cart_created_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Cart_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Cart", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
+func (ec *executionContext) _Cart_updated_at(ctx context.Context, field graphql.CollectedField, obj *dto.CartResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Cart_updated_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Cart_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Cart", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
 func (ec *executionContext) _CartItem_id(ctx context.Context, field graphql.CollectedField, obj *dto.CartItemResponse) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -1897,6 +2061,52 @@ func (ec *executionContext) fieldContext_CartItem_subtotal(_ context.Context, fi
 	return graphql.NewScalarFieldContext("CartItem", field, false, false, errors.New("field of type Float does not have child fields"))
 }
 
+func (ec *executionContext) _CartItem_created_at(ctx context.Context, field graphql.CollectedField, obj *dto.CartItemResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_CartItem_created_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_CartItem_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("CartItem", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
+func (ec *executionContext) _CartItem_updated_at(ctx context.Context, field graphql.CollectedField, obj *dto.CartItemResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_CartItem_updated_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_CartItem_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("CartItem", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
 func (ec *executionContext) _Category_id(ctx context.Context, field graphql.CollectedField, obj *dto.CategoryResponse) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -1987,6 +2197,52 @@ func (ec *executionContext) _Category_is_active(ctx context.Context, field graph
 }
 func (ec *executionContext) fieldContext_Category_is_active(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	return graphql.NewScalarFieldContext("Category", field, false, false, errors.New("field of type Boolean does not have child fields"))
+}
+
+func (ec *executionContext) _Category_created_at(ctx context.Context, field graphql.CollectedField, obj *dto.CategoryResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Category_created_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Category_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Category", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
+func (ec *executionContext) _Category_updated_at(ctx context.Context, field graphql.CollectedField, obj *dto.CategoryResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Category_updated_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Category_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Category", field, false, false, errors.New("field of type Time does not have child fields"))
 }
 
 func (ec *executionContext) _Mutation_register(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2773,15 +3029,38 @@ func (ec *executionContext) _Order_created_at(ctx context.Context, field graphql
 			return obj.CreatedAt, nil
 		},
 		nil,
-		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
-			return ec.marshalNString2string(ctx, selections, v)
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
 		},
 		true,
 		true,
 	)
 }
 func (ec *executionContext) fieldContext_Order_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("Order", field, false, false, errors.New("field of type String does not have child fields"))
+	return graphql.NewScalarFieldContext("Order", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
+func (ec *executionContext) _Order_updated_at(ctx context.Context, field graphql.CollectedField, obj *dto.OrderResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Order_updated_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Order_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Order", field, false, false, errors.New("field of type Time does not have child fields"))
 }
 
 func (ec *executionContext) _OrderConnection_edges(ctx context.Context, field graphql.CollectedField, obj *model.OrderConnection) (ret graphql.Marshaler) {
@@ -2979,6 +3258,29 @@ func (ec *executionContext) _OrderItem_price(ctx context.Context, field graphql.
 }
 func (ec *executionContext) fieldContext_OrderItem_price(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	return graphql.NewScalarFieldContext("OrderItem", field, false, false, errors.New("field of type Float does not have child fields"))
+}
+
+func (ec *executionContext) _OrderItem_created_at(ctx context.Context, field graphql.CollectedField, obj *dto.OrderItemResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_OrderItem_created_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_OrderItem_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("OrderItem", field, false, false, errors.New("field of type Time does not have child fields"))
 }
 
 func (ec *executionContext) _PageInfo_page(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
@@ -3321,6 +3623,52 @@ func (ec *executionContext) fieldContext_Product_images(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Product_created_at(ctx context.Context, field graphql.CollectedField, obj *dto.ProductResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Product_created_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Product_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Product", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
+func (ec *executionContext) _Product_updated_at(ctx context.Context, field graphql.CollectedField, obj *dto.ProductResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Product_updated_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Product_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Product", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
 func (ec *executionContext) _ProductConnection_edges(ctx context.Context, field graphql.CollectedField, obj *model.ProductConnection) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3507,6 +3855,29 @@ func (ec *executionContext) _ProductImage_is_primary(ctx context.Context, field 
 }
 func (ec *executionContext) fieldContext_ProductImage_is_primary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	return graphql.NewScalarFieldContext("ProductImage", field, false, false, errors.New("field of type Boolean does not have child fields"))
+}
+
+func (ec *executionContext) _ProductImage_created_at(ctx context.Context, field graphql.CollectedField, obj *dto.ProductImageResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ProductImage_created_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ProductImage_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ProductImage", field, false, false, errors.New("field of type Time does not have child fields"))
 }
 
 func (ec *executionContext) _Query_me(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4016,6 +4387,52 @@ func (ec *executionContext) _User_is_active(ctx context.Context, field graphql.C
 }
 func (ec *executionContext) fieldContext_User_is_active(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Boolean does not have child fields"))
+}
+
+func (ec *executionContext) _User_created_at(ctx context.Context, field graphql.CollectedField, obj *dto.UserResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_User_created_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_User_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Time does not have child fields"))
+}
+
+func (ec *executionContext) _User_updated_at(ctx context.Context, field graphql.CollectedField, obj *dto.UserResponse) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_User_updated_at(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_User_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Time does not have child fields"))
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -5678,6 +6095,16 @@ func (ec *executionContext) _Cart(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "created_at":
+			out.Values[i] = ec._Cart_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updated_at":
+			out.Values[i] = ec._Cart_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5764,6 +6191,16 @@ func (ec *executionContext) _CartItem(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "created_at":
+			out.Values[i] = ec._CartItem_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updated_at":
+			out.Values[i] = ec._CartItem_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5847,6 +6284,16 @@ func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "is_active":
 			out.Values[i] = ec._Category_is_active(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "created_at":
+			out.Values[i] = ec._Category_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updated_at":
+			out.Values[i] = ec._Category_updated_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -6125,6 +6572,11 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "updated_at":
+			out.Values[i] = ec._Order_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6289,6 +6741,11 @@ func (ec *executionContext) _OrderItem(ctx context.Context, sel ast.SelectionSet
 			}
 		case "price":
 			out.Values[i] = ec._OrderItem_price(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "created_at":
+			out.Values[i] = ec._OrderItem_created_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -6494,6 +6951,16 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "created_at":
+			out.Values[i] = ec._Product_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updated_at":
+			out.Values[i] = ec._Product_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6658,6 +7125,11 @@ func (ec *executionContext) _ProductImage(ctx context.Context, sel ast.Selection
 			}
 		case "is_primary":
 			out.Values[i] = ec._ProductImage_is_primary(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "created_at":
+			out.Values[i] = ec._ProductImage_created_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -6968,6 +7440,16 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "is_active":
 			out.Values[i] = ec._User_is_active(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "created_at":
+			out.Values[i] = ec._User_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updated_at":
+			out.Values[i] = ec._User_updated_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -7722,6 +8204,22 @@ func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) 
 func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	_ = sel
 	res := graphql.MarshalString(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v any) (time.Time, error) {
+	res, err := graphql.UnmarshalTime(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	_ = sel
+	res := graphql.MarshalTime(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
