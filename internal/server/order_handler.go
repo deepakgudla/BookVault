@@ -20,7 +20,7 @@ import (
 func (s *Server) createOrder(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
-	order, err := s.orderService.CreateOrder(int(userID))
+	order, err := s.orderService.CreateOrder(userID)
 	if err != nil {
 		utils.BadRequestResponse(c, "failed to create order", err)
 		return

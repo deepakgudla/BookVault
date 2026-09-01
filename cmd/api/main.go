@@ -16,6 +16,7 @@ import (
 	"github.com/deepakgudla/bookvault/internal/interfaces"
 	"github.com/deepakgudla/bookvault/internal/logger"
 	"github.com/deepakgudla/bookvault/internal/providers"
+	"github.com/deepakgudla/bookvault/internal/repository"
 	"github.com/deepakgudla/bookvault/internal/server"
 	"github.com/deepakgudla/bookvault/internal/services"
 	"github.com/gin-gonic/gin"
@@ -77,7 +78,10 @@ func main() {
 
 	gin.SetMode(cfg.Server.GinMode)
 
-	authService := services.NewAuthService(db, cfg, eventPublisher)
+	userRepository := repository.NewUserRepository(db)
+	cartRepository := repository.NewCartRepository(db)
+
+	authService := services.NewAuthService(cfg, eventPublisher, userRepository, cartRepository)
 	productService := services.NewProductService(db)
 	userService := services.NewUserService(db)
 	cartService := services.NewCartService(db)

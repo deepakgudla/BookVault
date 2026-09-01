@@ -235,7 +235,7 @@ func (r *mutationResolver) CreateOrder(ctx context.Context) (*dto.OrderResponse,
 		return nil, ErrUnauthorized
 	}
 
-	order, err := r.orderService.CreateOrder(int(userID))
+	order, err := r.orderService.CreateOrder(userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create order: %w", err)
 	}
