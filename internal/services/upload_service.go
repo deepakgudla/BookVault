@@ -12,14 +12,17 @@ import (
 
 var _ UploadServiceInterface = (*UploadService)(nil)
 
+// UploadService validates and stores uploaded product images.
 type UploadService struct {
 	provider interfaces.UploadProvider
 }
 
+// NewUploadService creates an upload service.
 func NewUploadService(provider interfaces.UploadProvider) *UploadService {
 	return &UploadService{provider: provider}
 }
 
+// UploadProductImage validates and stores a product image.
 func (s *UploadService) UploadProductImage(productID uint, file *multipart.FileHeader) (string, error) {
 	ext := strings.ToLower(filepath.Ext(file.Filename)) // image extensions ()jpg, jpeg etc...
 	if !isValidImageExt(ext) {

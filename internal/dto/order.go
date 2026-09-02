@@ -2,15 +2,18 @@ package dto
 
 import "time"
 
+// AddToCartRequest identifies a product and quantity to add to a cart.
 type AddToCartRequest struct {
 	ProductID uint `json:"product_id" binding:"required"`
 	Quantity  int  `json:"quantity" binding:"required,min=1"`
 }
 
+// UpdateCartItemRequest contains a replacement cart-item quantity.
 type UpdateCartItemRequest struct {
 	Quantity int `json:"quantity" binding:"required,min=1"`
 }
 
+// CartResponse contains a cart and its calculated total.
 type CartResponse struct {
 	ID        uint               `json:"id"`
 	UserID    uint               `json:"user_id"`
@@ -20,6 +23,7 @@ type CartResponse struct {
 	UpdatedAt time.Time          `json:"updated_at"`
 }
 
+// CartItemResponse contains a cart item and its product details.
 type CartItemResponse struct {
 	ID        uint            `json:"id"`
 	Product   ProductResponse `json:"product"`
@@ -29,6 +33,7 @@ type CartItemResponse struct {
 	UpdatedAt time.Time       `json:"updated_at"`
 }
 
+// OrderResponse contains an order and its items.
 type OrderResponse struct {
 	ID          uint                `json:"id"`
 	UserID      uint                `json:"user_id"`
@@ -39,6 +44,7 @@ type OrderResponse struct {
 	UpdatedAt   time.Time           `json:"updated_at"`
 }
 
+// OrderItemResponse contains an ordered product and quantity.
 type OrderItemResponse struct {
 	ID        uint            `json:"id"`
 	Product   ProductResponse `json:"product"`

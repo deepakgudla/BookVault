@@ -10,14 +10,17 @@ import (
 
 var _ CartServiceInterface = (*CartService)(nil)
 
+// CartService manages shopping carts.
 type CartService struct {
 	db *gorm.DB
 }
 
+// NewCartService creates a cart service backed by the supplied database.
 func NewCartService(db *gorm.DB) *CartService {
 	return &CartService{db: db}
 }
 
+// GetCart returns a user's cart.
 func (s *CartService) GetCart(userID uint) (*dto.CartResponse, error) {
 	var cart models.Cart
 	err := s.db.Preload("CartItems.Product.Category").Where("user_id=?", userID).First(&cart).Error
@@ -28,6 +31,7 @@ func (s *CartService) GetCart(userID uint) (*dto.CartResponse, error) {
 	return s.convertToCartResponse(&cart), nil
 }
 
+// AddToCart adds a product quantity to a user's cart.
 func (s *CartService) AddToCart(userID uint, req *dto.AddToCartRequest) (*dto.CartResponse, error) {
 	var product models.Product
 	if err := s.db.First(&product, req.ProductID).Error; err != nil {
@@ -66,10 +70,11 @@ func (s *CartService) AddToCart(userID uint, req *dto.AddToCartRequest) (*dto.Ca
 	return s.GetCart(userID)
 }
 
-func (s *CartService) UpdateCartItem(UserID, itemID uint, req *dto.UpdateCartItemRequest) (*dto.CartResponse, error) {
+// UpdateCartItem changes the quantity of an item in a user's cart.
+func (s *CartService) UpdateCartItem(userID, itemID uint, req *dto.UpdateCartItemRequest) (*dto.CartResponse, error) {
 	var cartItem models.CartItem
 	if err := s.db.Joins("JOIN carts ON cart_items.cart_id = carts.id").
-		Where("cart_items.id = ? AND carts.user_id=?", itemID, UserID).
+		Where("cart_items.id = ? AND carts.user_id=?", itemID, userID).
 		First(&cartItem).Error; err != nil {
 		return nil, errors.New("cart item not found")
 	}
@@ -88,10 +93,11 @@ func (s *CartService) UpdateCartItem(UserID, itemID uint, req *dto.UpdateCartIte
 		return nil, err
 	}
 
-	return s.GetCart(UserID)
+	return s.GetCart(userID)
 
 }
 
+// RemoveFromCart removes an item from a user's cart.
 func (s *CartService) RemoveFromCart(userID, itemID uint) error {
 	return s.db.Where("id = ? AND cart_id IN (?)", itemID, s.db.Select("id").Table("carts").Where("user_id = ?", userID)).Delete(&models.CartItem{}).Error
 

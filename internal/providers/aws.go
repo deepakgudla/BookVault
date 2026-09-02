@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 )
 
+// CreateAWSConfig creates an AWS configuration for the given endpoint and region.
 func CreateAWSConfig(ctx context.Context, endpoint, region string) (aws.Config, error) {
 	var cfg aws.Config
 	var err error

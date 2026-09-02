@@ -11,6 +11,7 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require
 // here.
 
+// Resolver contains the services used by GraphQL resolvers.
 type Resolver struct {
 	authService    services.AuthServiceInterace
 	userService    services.UserServiceInterface
@@ -19,6 +20,7 @@ type Resolver struct {
 	orderService   services.OrderServiceInterface
 }
 
+// NewResolver creates a GraphQL resolver with its service dependencies.
 func NewResolver(
 	authService services.AuthServiceInterace,
 	userService services.UserServiceInterface,

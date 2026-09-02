@@ -12,14 +12,17 @@ import (
 
 var _ OrderServiceInterface = (*OrderService)(nil)
 
+// OrderService manages order creation and retrieval.
 type OrderService struct {
 	db *gorm.DB
 }
 
+// NewOrderService creates an order service backed by the supplied database.
 func NewOrderService(db *gorm.DB) *OrderService {
 	return &OrderService{db: db}
 }
 
+// CreateOrder creates an order from the user's current cart.
 func (s *OrderService) CreateOrder(userID uint) (*dto.OrderResponse, error) {
 	var orderResponse *dto.OrderResponse
 
@@ -90,6 +93,7 @@ func (s *OrderService) CreateOrder(userID uint) (*dto.OrderResponse, error) {
 	return orderResponse, nil
 }
 
+// GetOrders returns a user's orders and pagination metadata.
 func (s *OrderService) GetOrders(userID uint, page, limit int) ([]dto.OrderResponse, *utils.PaginationMeta, error) {
 	if page < 1 {
 		page = 1
@@ -130,6 +134,7 @@ func (s *OrderService) GetOrders(userID uint, page, limit int) ([]dto.OrderRespo
 	return response, meta, nil
 }
 
+// GetOrder returns a user's order by ID.
 func (s *OrderService) GetOrder(userID, orderID uint) (*dto.OrderResponse, error) {
 	var order models.Order
 	if err := s.db.Preload("OrderItems.Product.Category").Where("id = ? AND user_id = ?", orderID, userID).First(&order).Error; err != nil {

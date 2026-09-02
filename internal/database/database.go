@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-// Database connection
+// New opens a database connection using the supplied configuration.
 func New(cfg *config.DBConfig) (*gorm.DB, error) {
 	abc := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=UTC",

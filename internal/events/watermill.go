@@ -15,11 +15,13 @@ import (
 	appconfig "github.com/deepakgudla/bookvault/internal/config"
 )
 
+// EventPublisher publishes application events to an SQS queue.
 type EventPublisher struct {
 	publisher message.Publisher
 	queueName string
 }
 
+// Publish serializes and publishes an event with its metadata.
 func (ep *EventPublisher) Publish(eventType string, payload interface{}, metadata map[string]string) error {
 
 	data, err := json.Marshal(payload)
@@ -38,10 +40,12 @@ func (ep *EventPublisher) Publish(eventType string, payload interface{}, metadat
 	return ep.publisher.Publish(ep.queueName, msg)
 }
 
+// Close releases the underlying event publisher.
 func (ep *EventPublisher) Close() error {
 	return ep.publisher.Close()
 }
 
+// NewEventPublisher creates an SQS-backed event publisher.
 func NewEventPublisher(ctx context.Context, cfg *appconfig.AWSConfig) (*EventPublisher, error) {
 	logger := watermill.NewStdLogger(false, false)
 

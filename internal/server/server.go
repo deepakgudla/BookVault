@@ -12,6 +12,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// Server contains the dependencies and route configuration for the HTTP API.
 type Server struct {
 	config *config.Config
 	// db             *gorm.DB
@@ -24,6 +25,7 @@ type Server struct {
 	orderService   services.OrderServiceInterface
 }
 
+// New creates an HTTP server with its service dependencies.
 func New(cfg *config.Config,
 	// db *gorm.DB,
 	logger *zerolog.Logger,
@@ -47,6 +49,7 @@ func New(cfg *config.Config,
 	}
 }
 
+// SetupRoutes configures and returns the HTTP router.
 func (s *Server) SetupRoutes() *gin.Engine {
 	router := gin.New()
 
@@ -80,68 +83,65 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	graphqlProtected.POST("/", s.graphqlHandler())
 
 	api := router.Group("/api/v1")
+	auth := api.Group("/auth")
+	auth.POST("/register", s.register)
+	auth.POST("/login", s.login)
+	auth.POST("logout", s.logout)
+	auth.POST("/refresh", s.refreshToken)
+
+	protected := api.Group("/")
+	protected.Use(s.authMiddleware())
 	{
-		auth := api.Group("/auth")
+		users := protected.Group("/users")
 		{
-			auth.POST("/register", s.register)
-			auth.POST("/login", s.login)
-			auth.POST("logout", s.logout)
-			auth.POST("/refresh", s.refreshToken)
+			userRoutes := users
+			userRoutes.GET("/profile", s.getProfile)
+			userRoutes.PUT("/profile", s.updateProfile)
 		}
 
-		protected := api.Group("/")
-		protected.Use(s.authMiddleware())
+		categories := protected.Group("/categories")
 		{
-			users := protected.Group("/users")
-			{
-				userRoutes := users
-				userRoutes.GET("/profile", s.getProfile)
-				userRoutes.PUT("/profile", s.updateProfile)
-			}
-
-			categories := protected.Group("/categories")
-			{
-				categoryRoutes := categories
-				categoryRoutes.POST("/", s.adminMiddleware(), s.createCategory)
-				categoryRoutes.PUT("/:id", s.adminMiddleware(), s.updateCategory)
-				categoryRoutes.DELETE("/:id", s.adminMiddleware(), s.deleteCategory)
-			}
-
-			products := protected.Group("/products")
-			{
-				productRoutes := products
-				productRoutes.POST("/", s.adminMiddleware(), s.createProduct)
-				productRoutes.PUT("/:id", s.adminMiddleware(), s.updateProduct)
-				productRoutes.DELETE("/:id", s.adminMiddleware(), s.deleteProduct)
-				productRoutes.POST("/:id/images", s.adminMiddleware(), s.uploadProductImage)
-			}
-
-			carts := protected.Group("/carts")
-			{
-				cartRoutes := carts
-				cartRoutes.GET("/", s.getCart)
-				cartRoutes.POST("/items", s.addToCart)
-				cartRoutes.PUT("/items/:id", s.updateCartItem)
-				cartRoutes.DELETE("/items/:id", s.removeFromCart)
-			}
-
-			orders := protected.Group("/orders")
-			{
-				orderRoutes := orders
-				orderRoutes.POST("/orders", s.createOrder)
-				orderRoutes.GET("/", s.getOrders)
-				orderRoutes.GET("/:id", s.getOrder)
-			}
+			categoryRoutes := categories
+			categoryRoutes.POST("/", s.adminMiddleware(), s.createCategory)
+			categoryRoutes.PUT("/:id", s.adminMiddleware(), s.updateCategory)
+			categoryRoutes.DELETE("/:id", s.adminMiddleware(), s.deleteCategory)
 		}
 
-		api.GET("/categories", s.getCategories)
-		api.GET("/products", s.getProducts)
-		api.GET("/products/:id", s.getProduct)
+		products := protected.Group("/products")
+		{
+			productRoutes := products
+			productRoutes.POST("/", s.adminMiddleware(), s.createProduct)
+			productRoutes.PUT("/:id", s.adminMiddleware(), s.updateProduct)
+			productRoutes.DELETE("/:id", s.adminMiddleware(), s.deleteProduct)
+			productRoutes.POST("/:id/images", s.adminMiddleware(), s.uploadProductImage)
+		}
+
+		carts := protected.Group("/carts")
+		{
+			cartRoutes := carts
+			cartRoutes.GET("/", s.getCart)
+			cartRoutes.POST("/items", s.addToCart)
+			cartRoutes.PUT("/items/:id", s.updateCartItem)
+			cartRoutes.DELETE("/items/:id", s.removeFromCart)
+		}
+
+		orders := protected.Group("/orders")
+		{
+			orderRoutes := orders
+			orderRoutes.POST("/orders", s.createOrder)
+			orderRoutes.GET("/", s.getOrders)
+			orderRoutes.GET("/:id", s.getOrder)
+		}
 	}
+
+	api.GET("/categories", s.getCategories)
+	api.GET("/products", s.getProducts)
+	api.GET("/products/:id", s.getProduct)
 
 	return router
 }
 
+// HealthCheck reports that the API is available.
 func (s *Server) HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 }

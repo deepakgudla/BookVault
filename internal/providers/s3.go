@@ -15,13 +15,15 @@ import (
 	appConfig "github.com/deepakgudla/bookvault/internal/config"
 )
 
+// S3Provider stores uploaded files in an S3-compatible object store.
 type S3Provider struct {
 	client   *s3.Client
-	uploader *manager.Uploader
+	uploader *manager.Uploader //nolint:staticcheck // transfermanager is not compatible with this SDK version.
 	bucket   string
 	endpoint string
 }
 
+// NewS3Provider creates an S3 upload provider.
 func NewS3Provider(cfg *appConfig.Config) *S3Provider {
 	awsCfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(cfg.AWS.Region),
@@ -45,12 +47,13 @@ func NewS3Provider(cfg *appConfig.Config) *S3Provider {
 
 	return &S3Provider{
 		client:   client,
-		uploader: manager.NewUploader(client),
+		uploader: manager.NewUploader(client), //nolint:staticcheck // transfermanager is not compatible with this SDK version.
 		bucket:   cfg.AWS.S3Bucket,
 		endpoint: cfg.AWS.S3Endpoint,
 	}
 }
 
+// UploadFile uploads a multipart file to object storage.
 func (p *S3Provider) UploadFile(file *multipart.FileHeader, path string) (string, error) {
 
 	log.Printf("uploading file %s using S3", path)
@@ -65,7 +68,7 @@ func (p *S3Provider) UploadFile(file *multipart.FileHeader, path string) (string
 		}
 	}()
 
-	result, err := p.uploader.Upload(context.TODO(), &s3.PutObjectInput{
+	result, err := p.uploader.Upload(context.TODO(), &s3.PutObjectInput{ //nolint:staticcheck // transfermanager is not compatible with this SDK version.
 		Bucket: aws.String(p.bucket),
 		Key:    aws.String(path),
 		Body:   src,
@@ -78,6 +81,7 @@ func (p *S3Provider) UploadFile(file *multipart.FileHeader, path string) (string
 	return *result.Key, nil
 }
 
+// DeleteFile removes a file from object storage.
 func (p *S3Provider) DeleteFile(path string) error {
 	_, err := p.client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
 		Bucket: aws.String(p.bucket),

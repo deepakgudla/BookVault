@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// New creates the application logger.
 func New() zerolog.Logger {
 	zerolog.TimeFieldFormat = time.RFC3339
 

@@ -15,6 +15,7 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
+// GraphQLHandler builds the executable GraphQL HTTP handler.
 func (s *Server) GraphQLHandler() *handler.Server {
 
 	r := resolver.NewResolver(
@@ -90,7 +91,6 @@ func (s *Server) graphqlMiddleware() gin.HandlerFunc {
 		ctx = context.WithValue(ctx, utils.UserEmailKey, userEmail)
 		ctx = context.WithValue(ctx, utils.UserRoleKey, userRole)
 		c.Request = c.Request.WithContext(ctx)
-		ctx = context.WithValue(ctx, utils.GinContextKey, c)
 		c.Next()
 	}
 }
@@ -102,13 +102,13 @@ func (s *Server) graphqlPublicMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 		if userID, exists := c.Get("user_id"); exists {
-			ctx = context.WithValue(ctx, "user_id", userID)
+			ctx = context.WithValue(ctx, utils.UserIDKey, userID)
 		}
 		if userEmail, exists := c.Get("user_email"); exists {
-			ctx = context.WithValue(ctx, "user_email", userEmail)
+			ctx = context.WithValue(ctx, utils.UserEmailKey, userEmail)
 		}
 		if userRole, exists := c.Get("user_role"); exists {
-			ctx = context.WithValue(ctx, "user_role", userRole)
+			ctx = context.WithValue(ctx, utils.UserRoleKey, userRole)
 		}
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()

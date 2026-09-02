@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// config
+// Config contains all application configuration.
 type Config struct {
 	Server   ServerConfig
 	Database DBConfig
@@ -18,13 +18,13 @@ type Config struct {
 	SMTP     SMTPConfig
 }
 
-// ServerConfig fields
+// ServerConfig contains HTTP server configuration.
 type ServerConfig struct {
 	Port    string
 	GinMode string
 }
 
-// DBConfig fields
+// DBConfig contains database connection configuration.
 type DBConfig struct {
 	Host     string
 	Port     string
@@ -34,14 +34,14 @@ type DBConfig struct {
 	SSLMode  string
 }
 
-// JWT configuration
+// JWTConfig contains JSON Web Token configuration.
 type JWTConfig struct {
 	Secret              string
 	ExpiresIn           time.Duration
 	RefreshTokenExpires time.Duration
 }
 
-// AWS configuration
+// AWSConfig contains AWS service configuration.
 type AWSConfig struct {
 	Region         string
 	AccessKey      string
@@ -51,6 +51,7 @@ type AWSConfig struct {
 	S3Endpoint     string
 }
 
+// SMTPConfig contains SMTP server configuration.
 type SMTPConfig struct {
 	Host     string
 	Port     int
@@ -59,14 +60,14 @@ type SMTPConfig struct {
 	From     string
 }
 
-// Upload config
+// UploadConfig contains file upload configuration.
 type UploadConfig struct {
 	Path           string
 	MaxFileSize    int64
 	UploadProvider string
 }
 
-// load function loads config
+// Load reads application configuration from the environment.
 func Load() (*Config, error) {
 	_ = godotenv.Load()
 

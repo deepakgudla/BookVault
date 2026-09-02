@@ -16,6 +16,7 @@ import (
 
 var _ AuthServiceInterace = (*AuthService)(nil)
 
+// AuthService handles account authentication and token lifecycle operations.
 type AuthService struct {
 	userRepo       repository.UserRepositoryInterface
 	cartRepo       repository.CartRepositoryInterface
@@ -23,15 +24,17 @@ type AuthService struct {
 	eventPublisher events.Publisher
 }
 
-func NewAuthService(config *config.Config, eventPublisher events.Publisher, userRepo repository.UserRepositoryInterface, cartRepo repository.CartRepositoryInterface) *AuthService {
+// NewAuthService creates an authentication service.
+func NewAuthService(cfg *config.Config, eventPublisher events.Publisher, userRepo repository.UserRepositoryInterface, cartRepo repository.CartRepositoryInterface) *AuthService {
 	return &AuthService{
-		config:         config,
+		config:         cfg,
 		eventPublisher: eventPublisher,
 		userRepo:       userRepo,
 		cartRepo:       cartRepo,
 	}
 }
 
+// Register creates a customer account and its initial cart.
 func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, error) {
 
 	if _, err := s.userRepo.GetByEmail(req.Email); err == nil {
@@ -65,6 +68,7 @@ func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, err
 	return s.generateAuthResponse(&user)
 }
 
+// Login authenticates a user and returns a token pair.
 func (s *AuthService) Login(req *dto.LoginRequest) (*dto.AuthResponse, error) {
 	user, err := s.userRepo.GetByEmailAndActive(req.Email, true)
 	if err != nil {
@@ -78,6 +82,7 @@ func (s *AuthService) Login(req *dto.LoginRequest) (*dto.AuthResponse, error) {
 	return s.generateAuthResponse(user)
 }
 
+// RefreshToken validates a refresh token and returns a new token pair.
 func (s *AuthService) RefreshToken(req *dto.RefreshTokenRequest) (*dto.AuthResponse, error) {
 	claims, err := utils.ValidateToken(req.RefreshToken, s.config.JWT.Secret)
 	if err != nil {
@@ -102,6 +107,7 @@ func (s *AuthService) RefreshToken(req *dto.RefreshTokenRequest) (*dto.AuthRespo
 	return s.generateAuthResponse(user)
 }
 
+// Logout invalidates a refresh token.
 func (s *AuthService) Logout(refreshToken string) error {
 	return s.userRepo.DeleteRefreshToken(refreshToken)
 }

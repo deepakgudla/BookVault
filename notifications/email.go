@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+// SMTPConfig contains the connection settings for an SMTP server.
 type SMTPConfig struct {
 	Host     string
 	Port     int
@@ -16,22 +17,26 @@ type SMTPConfig struct {
 	From     string
 }
 
+// SimpleEmail contains the fields of a plain email message.
 type SimpleEmail struct {
 	To      string
 	Subject string
 	Body    string
 }
 
+// EmailNotifier sends email notifications through SMTP.
 type EmailNotifier struct {
 	config *SMTPConfig
 }
 
+// NewEmailNotifier creates an SMTP email notifier.
 func NewEmailNotifier(config *SMTPConfig) *EmailNotifier {
 	return &EmailNotifier{
 		config: config,
 	}
 }
 
+// SendSimpleEmail sends a plain email message.
 func (e *EmailNotifier) SendSimpleEmail(email *SimpleEmail) error {
 	addr := net.JoinHostPort(e.config.Host, strconv.Itoa(e.config.Port))
 
@@ -97,6 +102,7 @@ func (e *EmailNotifier) SendSimpleEmail(email *SimpleEmail) error {
 	return nil
 }
 
+// SendLoginNotification sends a notification for a successful login.
 func (e *EmailNotifier) SendLoginNotification(userEmail, userName string) error {
 	email := &SimpleEmail{
 		To:      userEmail,

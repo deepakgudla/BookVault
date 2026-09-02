@@ -2,17 +2,20 @@ package dto
 
 import "time"
 
+// CreateCategoryRequest contains fields for creating a category.
 type CreateCategoryRequest struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description"`
 }
 
+// UpdateCategoryRequest contains fields for updating a category.
 type UpdateCategoryRequest struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description"`
 	IsActive    *bool  `json:"is_active"`
 }
 
+// CategoryResponse contains category details returned by the API.
 type CategoryResponse struct {
 	ID          uint      `json:"id"`
 	Name        string    `json:"name"`
@@ -22,6 +25,7 @@ type CategoryResponse struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+// CreateProductRequest contains fields for creating a product.
 type CreateProductRequest struct {
 	CategoryID  uint    `json:"category_id" binding:"required"`
 	Name        string  `json:"name" binding:"required"`
@@ -31,6 +35,7 @@ type CreateProductRequest struct {
 	SKU         string  `json:"sku" binding:"required"`
 }
 
+// UpdateProductRequest contains fields for updating a product.
 type UpdateProductRequest struct {
 	CategoryID  uint    `json:"category_id" binding:"required"`
 	Name        string  `json:"name" binding:"required"`
@@ -40,6 +45,7 @@ type UpdateProductRequest struct {
 	IsActive    *bool   `json:"is_active"`
 }
 
+// ProductResponse contains product details returned by the API.
 type ProductResponse struct {
 	ID          uint                   `json:"id"`
 	CategoryID  uint                   `json:"category_id"`
@@ -55,6 +61,7 @@ type ProductResponse struct {
 	UpdatedAt   time.Time              `json:"updated_at"`
 }
 
+// ProductImageResponse contains product image details.
 type ProductImageResponse struct {
 	ID        uint      `json:"id"`
 	URL       string    `json:"url"`
