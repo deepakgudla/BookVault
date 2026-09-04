@@ -35,6 +35,7 @@ type ProductServiceInterface interface {
 	DeleteProduct(id uint) error
 
 	AddProductImage(productID uint, url, alText string) error
+	SearchProducts(req *dto.SearchProductRequest) ([]dto.ProductSearchResult, *utils.PaginationMeta, error)
 }
 
 // CartServiceInterface defines shopping cart operations.
