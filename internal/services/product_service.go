@@ -207,6 +207,7 @@ func (s *ProductService) AddProductImage(productID uint, url, altText string) er
 
 }
 
+// SearchProducts uses full text search to search prodiucts
 func (s *ProductService) SearchProducts(req *dto.SearchProductRequest) ([]dto.ProductSearchResult, *utils.PaginationMeta, error) {
 	if req.Page < 1 {
 		req.Page = 1

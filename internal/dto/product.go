@@ -80,7 +80,7 @@ type SearchProductRequest struct {
 	MaxPrice   *float64 `form:"max_price"`
 }
 
-// ProductSearchResults contains results of the product search
+// ProductSearchResult contains results of the product search
 type ProductSearchResult struct {
 	ProductResponse
 	Rank float32 `json:"rank"`
