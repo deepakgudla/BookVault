@@ -3,7 +3,6 @@ package services
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/deepakgudla/bookvault/internal/config"
@@ -12,6 +11,8 @@ import (
 	"github.com/deepakgudla/bookvault/internal/models"
 	"github.com/deepakgudla/bookvault/internal/repository"
 	"github.com/deepakgudla/bookvault/internal/utils"
+	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 )
 
 var _ AuthServiceInterace = (*AuthService)(nil)
@@ -22,6 +23,14 @@ type AuthService struct {
 	cartRepo       repository.CartRepositoryInterface
 	config         *config.Config
 	eventPublisher events.Publisher
+	db             *gorm.DB
+}
+
+// NewAuthServiceWithDB creates an authentication service with transactional registration support.
+func NewAuthServiceWithDB(cfg *config.Config, eventPublisher events.Publisher, userRepo repository.UserRepositoryInterface, cartRepo repository.CartRepositoryInterface, db *gorm.DB) *AuthService {
+	service := NewAuthService(cfg, eventPublisher, userRepo, cartRepo)
+	service.db = db
+	return service
 }
 
 // NewAuthService creates an authentication service.
@@ -55,14 +64,27 @@ func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, err
 		Role:      models.UserRoleCustomer,
 	}
 
-	if err := s.userRepo.Create(&user); err != nil {
-		return nil, err
+	createUserAndCart := func(userRepo repository.UserRepositoryInterface, cartRepo repository.CartRepositoryInterface) error {
+		if err := userRepo.Create(&user); err != nil {
+			return err
+		}
+
+		cart := models.Cart{UserID: user.ID}
+		if err := cartRepo.Create(&cart); err != nil {
+			return fmt.Errorf("create cart: %w", err)
+		}
+		return nil
 	}
 
-	cart := models.Cart{UserID: user.ID}
-	if err := s.cartRepo.Create(&cart); err != nil {
-		fmt.Println("unable to creatr cart")
-		_ = err
+	if s.db != nil {
+		err = s.db.Transaction(func(tx *gorm.DB) error {
+			return createUserAndCart(repository.NewUserRepository(tx), repository.NewCartRepository(tx))
+		})
+	} else {
+		err = createUserAndCart(s.userRepo, s.cartRepo)
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return s.generateAuthResponse(&user)
@@ -100,8 +122,7 @@ func (s *AuthService) RefreshToken(req *dto.RefreshTokenRequest) (*dto.AuthRespo
 	}
 
 	if err := s.userRepo.DeleteRefreshTokenByID(refreshToken.ID); err != nil {
-		log.Println(err)
-		_ = err
+		log.Error().Err(err).Uint("refresh_token_id", refreshToken.ID).Msg("unable to delete refresh token")
 	}
 
 	return s.generateAuthResponse(user)
@@ -130,14 +151,14 @@ func (s *AuthService) generateAuthResponse(user *models.User) (*dto.AuthResponse
 	}
 
 	if err := s.userRepo.CreateRefreshToken(&refreshTokenModel); err != nil {
-		log.Println(err)
-		_ = err
+		log.Error().Err(err).Uint("user_id", user.ID).Msg("unable to persist refresh token")
 	}
 
-	err = s.eventPublisher.Publish("USER_LOGGED_IN", user, map[string]string{})
-	if err != nil {
-		return nil, fmt.Errorf("unable to publish user login event: %w", err)
-	}
+	go func() {
+		if err := s.eventPublisher.Publish("USER_LOGGED_IN", user, map[string]string{}); err != nil {
+			log.Error().Err(err).Uint("user_id", user.ID).Msg("unable to publish user login event")
+		}
+	}()
 
 	return &dto.AuthResponse{
 		User: dto.UserResponse{

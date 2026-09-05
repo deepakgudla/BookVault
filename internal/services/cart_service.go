@@ -58,13 +58,17 @@ func (s *CartService) AddToCart(userID uint, req *dto.AddToCartRequest) (*dto.Ca
 			ProductID: req.ProductID,
 			Quantity:  req.Quantity,
 		}
-		s.db.Create(&cartItem)
+		if err := s.db.Create(&cartItem).Error; err != nil {
+			return nil, err
+		}
 	} else {
 		cartItem.Quantity += req.Quantity
 		if cartItem.Quantity > product.Stock {
 			return nil, errors.New("insufficient stock")
 		}
-		s.db.Save(&cartItem)
+		if err := s.db.Save(&cartItem).Error; err != nil {
+			return nil, err
+		}
 	}
 
 	return s.GetCart(userID)
@@ -131,8 +135,8 @@ func (s *CartService) convertToCartResponse(cart *models.Cart) *dto.CartResponse
 			},
 			Quantity:  cart.CartItems[i].Quantity,
 			SubTotal:  subtotal,
-			CreatedAt: cartItems[i].CreatedAt,
-			UpdatedAt: cartItems[i].UpdatedAt,
+			CreatedAt: cart.CartItems[i].CreatedAt,
+			UpdatedAt: cart.CartItems[i].UpdatedAt,
 		}
 	}
 

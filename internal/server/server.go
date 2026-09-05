@@ -128,7 +128,7 @@ func (s *Server) SetupRoutes() *gin.Engine {
 		orders := protected.Group("/orders")
 		{
 			orderRoutes := orders
-			orderRoutes.POST("/orders", s.createOrder)
+			orderRoutes.POST("/", s.createOrder)
 			orderRoutes.GET("/", s.getOrders)
 			orderRoutes.GET("/:id", s.getOrder)
 		}

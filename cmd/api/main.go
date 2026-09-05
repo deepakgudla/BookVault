@@ -81,7 +81,7 @@ func main() {
 	userRepository := repository.NewUserRepository(db)
 	cartRepository := repository.NewCartRepository(db)
 
-	authService := services.NewAuthService(cfg, eventPublisher, userRepository, cartRepository)
+	authService := services.NewAuthServiceWithDB(cfg, eventPublisher, userRepository, cartRepository, db)
 	productService := services.NewProductService(db)
 	userService := services.NewUserService(db)
 	cartService := services.NewCartService(db)

@@ -238,6 +238,7 @@ func (s *Server) deleteProduct(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		utils.BadRequestResponse(c, "invalid category ID", err)
+		return
 	}
 
 	if err := s.productService.DeleteProduct(uint(id)); err != nil {
