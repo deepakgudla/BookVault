@@ -8,7 +8,7 @@ import (
 
 // User represents an account in the system.
 type User struct {
-	ID        uint           `json:"id" gorm:"primary key"`
+	ID        uint           `json:"id" gorm:"primaryKey"`
 	Email     string         `json:"email" gorm:"uniqueIndex;not null"`
 	Password  string         `json:"-" gorm:"not null"`
 	FirstName string         `json:"first_name" gorm:"not null"`
@@ -37,7 +37,7 @@ const (
 
 // RefreshToken represents a token used to refresh an authenticated session.
 type RefreshToken struct {
-	ID        uint           `json:"id" gorm:"primary key"`
+	ID        uint           `json:"id" gorm:"primaryKey"`
 	UserID    uint           `json:"user_id" gorm:"not null"`
 	Token     string         `json:"token" gorm:"UniqueIndex;not null"`
 	ExpiresAt time.Time      `json:"expires_at" gorm:"not null"`

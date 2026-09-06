@@ -6,6 +6,7 @@ import (
 	"github.com/deepakgudla/bookvault/internal/dto"
 	"github.com/deepakgudla/bookvault/internal/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 var _ CartServiceInterface = (*CartService)(nil)
@@ -33,42 +34,47 @@ func (s *CartService) GetCart(userID uint) (*dto.CartResponse, error) {
 
 // AddToCart adds a product quantity to a user's cart.
 func (s *CartService) AddToCart(userID uint, req *dto.AddToCartRequest) (*dto.CartResponse, error) {
-	var product models.Product
-	if err := s.db.First(&product, req.ProductID).Error; err != nil {
-		return nil, errors.New("product not found")
-	}
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		var product models.Product
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&product, req.ProductID).Error; err != nil {
+			return errors.New("product not found")
+		}
 
-	if product.Stock < req.Quantity {
-		return nil, errors.New("insufficient stock")
-	}
+		if product.Stock < req.Quantity {
+			return errors.New("insufficient stock")
+		}
 
-	var cart models.Cart
-	if err := s.db.Where("user_id=?", userID).First(&cart).Error; err != nil {
-		cart = models.Cart{UserID: userID}
-		if err := s.db.Create(&cart).Error; err != nil {
-			return nil, err
+		var cart models.Cart
+		if err := tx.Where("user_id=?", userID).First(&cart).Error; err != nil {
+			cart = models.Cart{UserID: userID}
+			if err := tx.Create(&cart).Error; err != nil {
+				return err
+			}
 		}
-	}
 
-	// what if item already exists in the cart
-	var cartItem models.CartItem
-	if err := s.db.Where("cart_id = ? AND product_id = ?", cart.ID, req.ProductID).First(&cartItem).Error; err != nil {
-		cartItem = models.CartItem{
-			CartID:    cart.ID,
-			ProductID: req.ProductID,
-			Quantity:  req.Quantity,
+		var cartItem models.CartItem
+		if err := tx.Where("cart_id = ? AND product_id = ?", cart.ID, req.ProductID).First(&cartItem).Error; err != nil {
+			cartItem = models.CartItem{
+				CartID:    cart.ID,
+				ProductID: req.ProductID,
+				Quantity:  req.Quantity,
+			}
+			if err := tx.Create(&cartItem).Error; err != nil {
+				return err
+			}
+		} else {
+			cartItem.Quantity += req.Quantity
+			if cartItem.Quantity > product.Stock {
+				return errors.New("insufficient stock")
+			}
+			if err := tx.Save(&cartItem).Error; err != nil {
+				return err
+			}
 		}
-		if err := s.db.Create(&cartItem).Error; err != nil {
-			return nil, err
-		}
-	} else {
-		cartItem.Quantity += req.Quantity
-		if cartItem.Quantity > product.Stock {
-			return nil, errors.New("insufficient stock")
-		}
-		if err := s.db.Save(&cartItem).Error; err != nil {
-			return nil, err
-		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	return s.GetCart(userID)
@@ -76,24 +82,27 @@ func (s *CartService) AddToCart(userID uint, req *dto.AddToCartRequest) (*dto.Ca
 
 // UpdateCartItem changes the quantity of an item in a user's cart.
 func (s *CartService) UpdateCartItem(userID, itemID uint, req *dto.UpdateCartItemRequest) (*dto.CartResponse, error) {
-	var cartItem models.CartItem
-	if err := s.db.Joins("JOIN carts ON cart_items.cart_id = carts.id").
-		Where("cart_items.id = ? AND carts.user_id=?", itemID, userID).
-		First(&cartItem).Error; err != nil {
-		return nil, errors.New("cart item not found")
-	}
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		var cartItem models.CartItem
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Joins("JOIN carts ON cart_items.cart_id = carts.id").
+			Where("cart_items.id = ? AND carts.user_id=?", itemID, userID).
+			First(&cartItem).Error; err != nil {
+			return errors.New("cart item not found")
+		}
 
-	var product models.Product
-	if err := s.db.First(&product, cartItem.ProductID).Error; err != nil {
-		return nil, errors.New("product not found")
-	}
+		var product models.Product
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&product, cartItem.ProductID).Error; err != nil {
+			return errors.New("product not found")
+		}
 
-	if product.Stock < req.Quantity {
-		return nil, errors.New("insufficient stock")
-	}
+		if product.Stock < req.Quantity {
+			return errors.New("insufficient stock")
+		}
 
-	cartItem.Quantity = req.Quantity
-	if err := s.db.Save(&cartItem).Error; err != nil {
+		cartItem.Quantity = req.Quantity
+		return tx.Save(&cartItem).Error
+	})
+	if err != nil {
 		return nil, err
 	}
 
@@ -103,7 +112,14 @@ func (s *CartService) UpdateCartItem(userID, itemID uint, req *dto.UpdateCartIte
 
 // RemoveFromCart removes an item from a user's cart.
 func (s *CartService) RemoveFromCart(userID, itemID uint) error {
-	return s.db.Where("id = ? AND cart_id IN (?)", itemID, s.db.Select("id").Table("carts").Where("user_id = ?", userID)).Delete(&models.CartItem{}).Error
+	result := s.db.Where("id = ? AND cart_id IN (?)", itemID, s.db.Select("id").Table("carts").Where("user_id = ?", userID)).Delete(&models.CartItem{})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("cart item not found")
+	}
+	return nil
 
 }
 

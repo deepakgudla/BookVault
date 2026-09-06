@@ -94,7 +94,7 @@ func main() {
 		uploadProvider = providers.NewLocalUploadProvider(cfg.Upload.Path)
 	}
 
-	uploadService := services.NewUploadService(uploadProvider)
+	uploadService := services.NewUploadService(uploadProvider, cfg.Upload.MaxFileSize)
 
 	serve := server.New(
 		cfg,

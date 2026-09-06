@@ -37,7 +37,9 @@ func (s *Server) GraphQLHandler() *handler.Server {
 
 	serve.SetQueryCache(lru.New[*ast.QueryDocument](1000))
 
-	serve.Use(extension.Introspection{})
+	if s.config.Environment != "production" {
+		serve.Use(extension.Introspection{})
+	}
 	serve.Use(extension.AutomaticPersistedQuery{Cache: lru.New[string](100)})
 
 	return serve

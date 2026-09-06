@@ -55,9 +55,14 @@ func (s *OrderService) CreateOrder(userID uint) (*dto.OrderResponse, error) {
 				Price:     cartItem.Product.Price,
 			})
 
-			cartItem.Product.Stock -= cartItem.Quantity
-			if err := tx.Save(&cartItem.Product).Error; err != nil {
-				return err
+			result := tx.Model(&models.Product{}).
+				Where("id = ? AND stock >= ?", cartItem.ProductID, cartItem.Quantity).
+				UpdateColumn("stock", gorm.Expr("stock - ?", cartItem.Quantity))
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected != 1 {
+				return fmt.Errorf("insufficient stock for product: %s", cartItem.Product.Name)
 			}
 		}
 

@@ -49,7 +49,7 @@ func (ep *EventPublisher) Close() error {
 func NewEventPublisher(ctx context.Context, cfg *appconfig.AWSConfig) (*EventPublisher, error) {
 	logger := watermill.NewStdLogger(false, false)
 
-	awsConfig, err := providers.CreateAWSConfig(ctx, cfg.S3Endpoint, cfg.Region)
+	awsConfig, err := providers.CreateAWSConfig(ctx, cfg.SQSEndpoint, cfg.Region)
 	if err != nil {
 		return nil, fmt.Errorf("failed to crete AWS config: %w", err)
 	}

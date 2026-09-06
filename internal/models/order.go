@@ -64,8 +64,8 @@ type Cart struct {
 // CartItem represents a product and quantity within a cart.
 type CartItem struct {
 	ID        uint           `json:"id" gorm:"PrimaryKey"`
-	CartID    uint           `json:"cart_id" gorm:"uniqueIndex;not null"`
-	ProductID uint           `json:"product_id" gorm:"not null"`
+	CartID    uint           `json:"cart_id" gorm:"uniqueIndex:idx_cart_product;not null"`
+	ProductID uint           `json:"product_id" gorm:"uniqueIndex:idx_cart_product;not null"`
 	Quantity  int            `json:"quantity" gorm:"not null"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`

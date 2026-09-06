@@ -39,7 +39,7 @@ func main() {
 	emailNotifier := notifications.NewEmailNotifier(emailConfig)
 
 	// AWS config for SQS
-	awsConfig, err := providers.CreateAWSConfig(ctx, cfg.AWS.S3Endpoint, cfg.AWS.Region)
+	awsConfig, err := providers.CreateAWSConfig(ctx, cfg.AWS.SQSEndpoint, cfg.AWS.Region)
 	if err != nil {
 		log.Fatalf("failed to create AWS config: %v", err)
 	}

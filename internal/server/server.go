@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/deepakgudla/bookvault/internal/config"
 	"github.com/deepakgudla/bookvault/internal/services"
@@ -52,6 +53,7 @@ func New(cfg *config.Config,
 // SetupRoutes configures and returns the HTTP router.
 func (s *Server) SetupRoutes() *gin.Engine {
 	router := gin.New()
+	router.MaxMultipartMemory = s.config.Upload.MaxFileSize
 
 	// middlewares
 	router.Use(gin.Logger())
@@ -68,10 +70,11 @@ func (s *Server) SetupRoutes() *gin.Engine {
 
 	router.Static("/uploads", "./uploads")
 
-	router.GET("/playground", s.playgroundHandler())
-
-	router.GET("/playground/public", s.playgroundPublicHandler())
-	router.GET("/playground/protected", s.playgroundProtectedHandler())
+	if s.config.Environment != "production" {
+		router.GET("/playground", s.playgroundHandler())
+		router.GET("/playground/public", s.playgroundPublicHandler())
+		router.GET("/playground/protected", s.playgroundProtectedHandler())
+	}
 
 	graphqlPublic := router.Group("/graphql/public")
 	graphqlPublic.Use(s.graphqlPublicMiddleware())
@@ -149,9 +152,16 @@ func (s *Server) HealthCheck(c *gin.Context) {
 
 func (s *Server) corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "*")
+		origin := c.GetHeader("Origin")
+		allowed := strings.Split(s.config.Server.AllowedOrigins, ",")
+		for _, candidate := range allowed {
+			if strings.TrimSpace(candidate) == "*" || strings.TrimSpace(candidate) == origin {
+				c.Header("Access-Control-Allow-Origin", strings.TrimSpace(candidate))
+				break
+			}
+		}
 		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization,")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)

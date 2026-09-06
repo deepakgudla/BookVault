@@ -2,13 +2,10 @@ package providers
 
 import (
 	"context"
-	"log"
 	"mime/multipart"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
@@ -18,21 +15,14 @@ import (
 // S3Provider stores uploaded files in an S3-compatible object store.
 type S3Provider struct {
 	client   *s3.Client
-	uploader *manager.Uploader //nolint:staticcheck // transfermanager is not compatible with this SDK version.
+	uploader *manager.Uploader
 	bucket   string
 	endpoint string
 }
 
 // NewS3Provider creates an S3 upload provider.
 func NewS3Provider(cfg *appConfig.Config) *S3Provider {
-	awsCfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithRegion(cfg.AWS.Region),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
-			cfg.AWS.AccessKey,
-			cfg.AWS.SecretKey,
-			"",
-		)),
-	)
+	awsCfg, err := CreateAWSConfig(context.TODO(), cfg.AWS.S3Endpoint, cfg.AWS.Region)
 
 	if err != nil {
 		panic("failed to create AWS config" + err.Error())
@@ -47,7 +37,7 @@ func NewS3Provider(cfg *appConfig.Config) *S3Provider {
 
 	return &S3Provider{
 		client:   client,
-		uploader: manager.NewUploader(client), //nolint:staticcheck // transfermanager is not compatible with this SDK version.
+		uploader: manager.NewUploader(client),
 		bucket:   cfg.AWS.S3Bucket,
 		endpoint: cfg.AWS.S3Endpoint,
 	}
@@ -56,22 +46,18 @@ func NewS3Provider(cfg *appConfig.Config) *S3Provider {
 // UploadFile uploads a multipart file to object storage.
 func (p *S3Provider) UploadFile(file *multipart.FileHeader, path string) (string, error) {
 
-	log.Printf("uploading file %s using S3", path)
 	src, err := file.Open()
 	if err != nil {
 		return "", err
 	}
 
 	defer func() {
-		if err := src.Close(); err != nil {
-			log.Printf("failed to close source file: %v", err)
-		}
+		_ = src.Close()
 	}()
 
-	result, err := p.uploader.Upload(context.TODO(), &s3.PutObjectInput{ //nolint:staticcheck // transfermanager is not compatible with this SDK version.
-		Bucket: aws.String(p.bucket),
-		Key:    aws.String(path),
-		Body:   src,
+	result, err := p.uploader.Upload(context.TODO(), &s3.PutObjectInput{
+		Key:  aws.String(path),
+		Body: src,
 	})
 
 	if err != nil {

@@ -1,8 +1,10 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -10,18 +12,20 @@ import (
 
 // Config contains all application configuration.
 type Config struct {
-	Server   ServerConfig
-	Database DBConfig
-	JWT      JWTConfig
-	AWS      AWSConfig
-	Upload   UploadConfig
-	SMTP     SMTPConfig
+	Environment string
+	Server      ServerConfig
+	Database    DBConfig
+	JWT         JWTConfig
+	AWS         AWSConfig
+	Upload      UploadConfig
+	SMTP        SMTPConfig
 }
 
 // ServerConfig contains HTTP server configuration.
 type ServerConfig struct {
-	Port    string
-	GinMode string
+	Port           string
+	GinMode        string
+	AllowedOrigins string
 }
 
 // DBConfig contains database connection configuration.
@@ -49,6 +53,7 @@ type AWSConfig struct {
 	S3Bucket       string
 	EventQueueName string
 	S3Endpoint     string
+	SQSEndpoint    string
 }
 
 // SMTPConfig contains SMTP server configuration.
@@ -76,31 +81,32 @@ func Load() (*Config, error) {
 	maxUploadSize, _ := strconv.ParseInt(getEnv("MAX_UPLOAD_SIZE", "10485760"), 10, 64)
 	smtpPort, _ := strconv.Atoi(getEnv("SMTP_PORT", "1025"))
 
-	return &Config{
+	cfg := &Config{
+		Environment: getEnv("APP_ENV", getEnv("ENV", "development")),
 		Server: ServerConfig{
-			Port:    getEnv("PORT", "1357"),
-			GinMode: getEnv("GIN_MODE", "debug"),
+			Port:           getEnv("PORT", "1357"),
+			GinMode:        getEnv("GIN_MODE", "debug"),
+			AllowedOrigins: getEnv("CORS_ALLOWED_ORIGINS", "*"),
 		},
 		Database: DBConfig{
 			Host:     getEnv("DB_HOST", "localhost"),
 			Port:     getEnv("DB_PORT", "5433"),
 			User:     getEnv("DB_USER", "user"),
-			Password: getEnv("DB_PASSWORD", "password"),
+			Password: getEnv("DB_PASSWORD", ""),
 			Name:     getEnv("DB_NAME", "bookvault"),
 			SSLMode:  getEnv("DB_SSLMODE", "disable"),
 		},
 		JWT: JWTConfig{
-			Secret:              getEnv("JWT_SECRET", "<key>"),
+			Secret:              getEnv("JWT_SECRET", ""),
 			ExpiresIn:           jwtExpiresIn,
 			RefreshTokenExpires: refreshTokenExpires,
 		},
 		AWS: AWSConfig{
 			Region:         getEnv("AWS_REGION", ""),
-			AccessKey:      getEnv("AWS_ACCESS_KEY_ID", "test"),
-			SecretKey:      getEnv("AWS_SECRET_ACCESS_KEY", "test"),
-			S3Bucket:       getEnv("AWS_S3_BUCKET", "bookvault-uploads"),
-			S3Endpoint:     getEnv("AWS_S3_ENDPOINT", "http://localhost:4566"),
-			EventQueueName: getEnv("AWS_EVENT_QUEUE_NAME", "bookvault-events"),
+			S3Bucket:       getEnv("AWS_S3_BUCKET", ""),
+			S3Endpoint:     getEnv("AWS_S3_ENDPOINT", ""),
+			SQSEndpoint:    getEnv("AWS_SQS_ENDPOINT", ""),
+			EventQueueName: getEnv("AWS_EVENT_QUEUE_NAME", ""),
 		},
 		Upload: UploadConfig{
 			Path:           getEnv("UPLOAD_PATH", "./uploads"),
@@ -114,8 +120,46 @@ func Load() (*Config, error) {
 			Password: getEnv("SMTP_PASSWORD", ""),
 			From:     getEnv("SMTP_FROM", "noreply@vault.com"),
 		},
-	}, nil
+	}
 
+	if err := cfg.Validate(); err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
+
+}
+
+// Validate rejects unsafe or incomplete startup configuration.
+func (c *Config) Validate() error {
+	missing := make([]string, 0, 4)
+	if strings.TrimSpace(c.JWT.Secret) == "" {
+		missing = append(missing, "JWT_SECRET")
+	}
+	if strings.TrimSpace(c.Database.Password) == "" {
+		missing = append(missing, "DB_PASSWORD")
+	}
+	if c.Environment == "production" && (strings.TrimSpace(c.Server.AllowedOrigins) == "" || c.Server.AllowedOrigins == "*") {
+		missing = append(missing, "CORS_ALLOWED_ORIGINS")
+	}
+
+	awsMode := strings.TrimSpace(c.AWS.S3Endpoint) == "" && strings.TrimSpace(c.AWS.SQSEndpoint) == ""
+	if awsMode {
+		if strings.TrimSpace(c.AWS.Region) == "" {
+			missing = append(missing, "AWS_REGION")
+		}
+		if strings.TrimSpace(c.AWS.S3Bucket) == "" {
+			missing = append(missing, "AWS_S3_BUCKET")
+		}
+		if strings.TrimSpace(c.AWS.EventQueueName) == "" {
+			missing = append(missing, "AWS_EVENT_QUEUE_NAME")
+		}
+	}
+
+	if len(missing) > 0 {
+		return fmt.Errorf("missing required configuration: %s", strings.Join(missing, ", "))
+	}
+	return nil
 }
 
 func getEnv(key, defaultValue string) string {

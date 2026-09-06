@@ -72,7 +72,7 @@ type ProductImageResponse struct {
 
 // SearchProductRequest contains product request details
 type SearchProductRequest struct {
-	Query      string   `form:"q" binding:"required, min=1"`
+	Query      string   `form:"q" binding:"required,min=1"`
 	Page       int      `form:"page"`
 	Limit      int      `form:"limit"`
 	CategoryID *uint    `form:"category_id"`

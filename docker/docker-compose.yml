@@ -81,6 +81,7 @@ services:
       - DB_PASSWORD=password
       - DB_NAME=bookvault
       - AWS_S3_ENDPOINT=http://localstack:4566
+      - AWS_SQS_ENDPOINT=http://localstack:4566
       - AWS_REGION=ap-south-2
       - SMTP_HOST=mailpit
       - SMTP_PORT=1025
@@ -89,6 +90,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_S3_BUCKET=bookvault-uploads
       - AWS_EVENT_QUEUE_NAME=bookvault-events
+      - JWT_SECRET=local-development-only-change-me
     command: ["./api"]
 
   notifier:
@@ -109,6 +111,7 @@ services:
       - DB_PASSWORD=password
       - DB_NAME=bookvault
       - AWS_S3_ENDPOINT=http://localstack:4566
+      - AWS_SQS_ENDPOINT=http://localstack:4566
       - AWS_REGION=ap-south-2
       - SMTP_HOST=mailpit
       - SMTP_PORT=1025

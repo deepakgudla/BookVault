@@ -56,7 +56,7 @@ The current code doesn't have an AWS "mode" — it has a LocalStack mode that ha
 work against AWS by accident for S3, and will actively misbehave for SQS. Fix the design, not
 just the `.env` values.
 
-- [ ] **Stop hardcoding `test`/`test` credentials.**
+- [x] **Stop hardcoding `test`/`test` credentials.**
   `internal/providers/aws.go` — right now, *any time* `S3Endpoint` is non-empty, it force-sets
   static creds `"test"/"test"` (a LocalStack-only assumption baked into shared code). Split this
   into two paths:
@@ -66,7 +66,7 @@ just the `.env` values.
     IAM role (EC2 instance profile / ECS task role / EKS IRSA). Never put real AWS access keys
     in `.env` for a running service — that's what roles are for.
 
-- [ ] **Separate the S3 endpoint from the SQS endpoint — don't reuse one config value for both.**
+- [x] **Separate the S3 endpoint from the SQS endpoint — don't reuse one config value for both.**
   `internal/events/watermill.go` — the SQS client is built with `providers.CreateAWSConfig(ctx, cfg.S3Endpoint, cfg.Region)`.
   This only "works" because LocalStack multiplexes every service behind `:4566`. Real AWS has
   distinct endpoints per service and per region (`sqs.<region>.amazonaws.com`, `s3.<region>.amazonaws.com`).
@@ -74,33 +74,33 @@ just the `.env` values.
   passing S3's endpoint into the SQS client constructor. Same fix needed anywhere else `S3Endpoint`
   is reused for a non-S3 client.
 
-- [ ] **Turn off forced path-style addressing for real AWS.**
+- [x] **Turn off forced path-style addressing for real AWS.**
   `internal/providers/s3.go` — `UsePathStyle = true` is set whenever an endpoint is configured.
   Path-style is a LocalStack/MinIO requirement; real S3 should use virtual-hosted style
   (`UsePathStyle = false`, and just don't set a custom endpoint at all in AWS mode).
 
-- [ ] **Add IAM least-privilege policies** for whatever role/user runs in AWS: scope S3 access
+- [x] **Add IAM least-privilege policies** for whatever role/user runs in AWS: scope S3 access
   to `s3:PutObject`/`s3:GetObject`/`s3:DeleteObject` on the specific bucket+prefix only, and SQS
   to `sqs:SendMessage`/`sqs:ReceiveMessage`/`sqs:DeleteMessage` on the specific queue ARN only.
   Don't reuse one broad policy across both.
 
-- [ ] **Real S3 bucket setup that `init-localstack.sh` currently fakes for you:**
+- [x] **Real S3 bucket setup that `init-localstack.sh` currently fakes for you:**
   bucket versioning (recommended), default encryption (SSE-S3 or SSE-KMS), a bucket policy that
   blocks public access unless you intentionally want public reads, and lifecycle rules if
   uploads should expire/transition to cheaper storage classes.
 
-- [ ] **Real SQS queue setup that `init-localstack.sh` fakes for you:** a redrive policy pointing
+- [x] **Real SQS queue setup that `init-localstack.sh` fakes for you:** a redrive policy pointing
   at a dead-letter queue (so a poison message doesn't loop forever), and a visibility timeout
   tuned to your notifier's processing time.
 
-- [ ] **Write this as Infrastructure-as-Code** (Terraform or CDK) rather than shell scripts —
+- [x] **Write this as Infrastructure-as-Code** (Terraform or CDK) rather than shell scripts —
   you'll want the same bucket/queue defs reproducible across dev/staging/prod AWS accounts, not
   just LocalStack. This is also where bucket policy, encryption, and DLQ config above should live.
 
-- [ ] **Fix `.env.example` inconsistency**: `AWS_S3_ENDPOINT=http://localhost:9000` (port 9000
+- [x] **Fix `.env.example` inconsistency**: `AWS_S3_ENDPOINT=http://localhost:9000` (port 9000
   is MinIO's default, not LocalStack's `4566`) — pick one and make docker-compose match it.
 
-- [ ] **Config validation on startup**: right now missing/blank env vars silently fall back to
+- [x] **Config validation on startup**: right now missing/blank env vars silently fall back to
   defaults (including a placeholder JWT secret in `internal/config/config.go`). Add an explicit
   `Validate()` step that hard-fails startup if `JWT_SECRET`, `DB_PASSWORD`, or (in AWS mode)
   `AWS_S3_BUCKET`/`SQS` queue URL are empty, so a misconfigured prod deploy fails at boot, not
@@ -110,7 +110,7 @@ just the `.env` values.
 
 ## Phase 2 — Data integrity & concurrency
 
-- [ ] **Prevent overselling stock.** `AddToCart` / `UpdateCartItem`
+- [x] **Prevent overselling stock.** `AddToCart` / `UpdateCartItem`
   (`internal/services/cart_service.go`) and the stock check in
   `internal/services/order_service.go` read `Product.Stock`, then act on it later with no
   transaction/row lock. Two concurrent requests can both pass the check. Fix with either:
@@ -118,10 +118,10 @@ just the `.env` values.
     `RowsAffected`, or
   - `SELECT ... FOR UPDATE` (GORM: `clause.Locking{Strength: "UPDATE"}`) inside a transaction.
 
-- [ ] **`RemoveFromCart` doesn't check `RowsAffected`.** A delete that matches zero rows (item
+- [x] **`RemoveFromCart` doesn't check `RowsAffected`.** A delete that matches zero rows (item
   doesn't exist / doesn't belong to this user) currently still returns success to the client.
 
-- [ ] **Fix the GORM tag that doesn't match your real schema.**
+- [x] **Fix the GORM tag that doesn't match your real schema.**
   `internal/models/order.go` — `CartItem.CartID` is tagged `gorm:"uniqueIndex;not null"`. Your
   actual migration (`db/migrations/007_create_cart_items_table.up.sql`) correctly has
   `UNIQUE(cart_id, product_id)`. If anyone ever runs `AutoMigrate` against this model, it will
@@ -130,7 +130,7 @@ just the `.env` values.
   AutoMigrate must never run in this project (migrations are the source of truth) and remove
   the misleading tag.
 
-- [ ] **Fix invalid GORM tag syntax**: `internal/models/user.go` (and `RefreshToken`) use
+- [x] **Fix invalid GORM tag syntax**: `internal/models/user.go` (and `RefreshToken`) use
   `gorm:"primary key"` (with a space) instead of `gorm:"primaryKey"`. It currently "works" only
   because GORM's naming convention auto-detects a field named `ID` as PK regardless of the tag
   — but it's a landmine for the next person who renames that field or copies the pattern
@@ -141,7 +141,7 @@ just the `.env` values.
   point cannot represent money exactly and will eventually produce off-by-a-cent totals. Move to
   integer minor units (`int64` cents) or `shopspring/decimal` end-to-end (model → DTO → DB column).
 
-- [ ] **Fix the validator tag typo.** `internal/dto/product.go` has `binding:"required, min=1"`
+- [x] **Fix the validator tag typo.** `internal/dto/product.go` has `binding:"required, min=1"`
   — note the space after the comma. `go-playground/validator` tag parsing is comma-delimited
   with no spaces; this can silently break the `min=1` rule. Should be `binding:"required,min=1"`.
 
@@ -149,7 +149,7 @@ just the `.env` values.
 
 ## Phase 3 — Security hardening
 
-- [ ] **Pin the JWT signing algorithm on verification.** `internal/utils/jwt.go`'s
+- [x] **Pin the JWT signing algorithm on verification.** `internal/utils/jwt.go`'s
   `ValidateToken` doesn't restrict which algorithm is accepted. Add
   `jwt.WithValidMethods([]string{"HS256"})` (or check `token.Method` in the keyfunc) so a
   crafted token can't try to switch algorithms.
@@ -159,21 +159,21 @@ just the `.env` values.
   via `BadRequestResponse`/`InternalServerErrorResponse`. Log the full error server-side (with
   request ID), return a generic client-safe message.
 
-- [ ] **Gate the GraphQL Playground and introspection behind an env check.**
+- [x] **Gate the GraphQL Playground and introspection behind an env check.**
   `internal/server/graphql.go` / `server.go` — `/playground`, `/playground/public`,
   `/playground/protected` are always mounted. Only register them when
   `cfg.Env != "production"`, and consider disabling introspection in prod too.
 
-- [ ] **Enforce upload size limits server-side.** `MAX_UPLOAD_SIZE` exists in `.env.example` but
+- [x] **Enforce upload size limits server-side.** `MAX_UPLOAD_SIZE` exists in `.env.example` but
   isn't read anywhere in `internal/services/upload_service.go` or the handler. Wire it into
   `router.MaxMultipartMemory` and/or check `file.Size` before accepting the upload.
 
-- [ ] **Validate file content, not just extension.** `upload_service.go` whitelists extensions
+- [x] **Validate file content, not just extension.** `upload_service.go` whitelists extensions
   (good) but doesn't check magic bytes/MIME sniffing — a file can be renamed to bypass the
   extension check. Low severity here since nothing executes the file, but cheap to add
   (`http.DetectContentType` on the first 512 bytes).
 
-- [ ] **Tighten CORS for production.** `internal/server/server.go` sets
+- [x] **Tighten CORS for production.** `internal/server/server.go` sets
   `Access-Control-Allow-Origin: *` unconditionally. Make it a configured allow-list of real
   frontend origins in prod; also fix the trailing comma in the `Access-Control-Allow-Headers`
   value.
