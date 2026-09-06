@@ -48,3 +48,24 @@ uploads/
 # .vscode/
 
 
+
+# Terraform
+**/.terraform/
+
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+*.tfvars
+*.tfvars.json
+!terraform.tfvars.example
+
+crash.log
+crash.*.log
+
+*.tfplan
+*.tfplan.json
+
+todo.md
+
+
