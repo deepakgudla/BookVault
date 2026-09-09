@@ -20,7 +20,7 @@ import (
 // @Failure 400 {object} utils.Response "invalid request data"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 403 {object} utils.Response "admin access required"
-// @Router /categories [post]
+// @Router /api/v1/categories/ [post]
 func (s *Server) createCategory(c *gin.Context) {
 	var req dto.CreateCategoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -28,7 +28,7 @@ func (s *Server) createCategory(c *gin.Context) {
 		return
 	}
 
-	category, err := s.productService.CreateCategory(&req)
+	category, err := s.productService.CreateCategory(c.Request.Context(), &req)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to create category", err)
 		return
@@ -43,9 +43,9 @@ func (s *Server) createCategory(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} utils.Response{data=[]dto.CategoryResponse} "categories fetched successfully"
 // @Failure 500 {object} utils.Response "Internal server error"
-// @Router /categories [get]
+// @Router /api/v1/categories [get]
 func (s *Server) getCategories(c *gin.Context) {
-	categories, err := s.productService.GetCategory()
+	categories, err := s.productService.GetCategory(c.Request.Context())
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to create categories", err)
 		return
@@ -66,7 +66,7 @@ func (s *Server) getCategories(c *gin.Context) {
 // @Failure 400 {object} utils.Response "invalid request data"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 403 {object} utils.Response "admin access required"
-// @Router /categories/{id} [put]
+// @Router /api/v1/categories/{id} [put]
 func (s *Server) updateCategory(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -80,7 +80,7 @@ func (s *Server) updateCategory(c *gin.Context) {
 		return
 	}
 
-	category, err := s.productService.UpdateCategory(uint(id), &req)
+	category, err := s.productService.UpdateCategory(c.Request.Context(), uint(id), &req)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to update category", err)
 		return
@@ -98,7 +98,7 @@ func (s *Server) updateCategory(c *gin.Context) {
 // @Failure 400 {object} utils.Response "invalid category ID"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 403 {object} utils.Response "admin access required"
-// @Router /categories/{id} [delete]
+// @Router /api/v1/categories/{id} [delete]
 func (s *Server) deleteCategory(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -106,7 +106,7 @@ func (s *Server) deleteCategory(c *gin.Context) {
 		return
 	}
 
-	if err := s.productService.DeleteCategory(uint(id)); err != nil {
+	if err := s.productService.DeleteCategory(c.Request.Context(), uint(id)); err != nil {
 		utils.InternalServerErrorResponse(c, "failed to delete category", err)
 		return
 	}
@@ -125,7 +125,7 @@ func (s *Server) deleteCategory(c *gin.Context) {
 // @Failure 400 {object} utils.Response "invalid request data"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 403 {object} utils.Response "admin access required"
-// @Router /products [post]
+// @Router /api/v1/products/ [post]
 func (s *Server) createProduct(c *gin.Context) {
 	var req dto.CreateProductRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -133,7 +133,7 @@ func (s *Server) createProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := s.productService.CreateProduct(&req)
+	product, err := s.productService.CreateProduct(c.Request.Context(), &req)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to create product", err)
 		return
@@ -150,12 +150,12 @@ func (s *Server) createProduct(c *gin.Context) {
 // @Param limit query int false "Items per page" default(10)
 // @Success 200 {object} utils.PaginatedResponse{data=[]dto.ProductResponse} "successfully fetched products"
 // @Failure 500 {object} utils.Response "internal server error"
-// @Router /products [get]
+// @Router /api/v1/products [get]
 func (s *Server) getProducts(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 
-	products, meta, err := s.productService.GetProducts(page, limit)
+	products, meta, err := s.productService.GetProducts(c.Request.Context(), page, limit)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to fetch products", err)
 		return
@@ -172,7 +172,7 @@ func (s *Server) getProducts(c *gin.Context) {
 // @Success 200 {object} utils.Response{data=dto.ProductResponse} "successfully fetched product"
 // @Failure 400 {object} utils.Response "invalid product ID"
 // @Failure 404 {object} utils.Response "product not found"
-// @Router /products/{id} [get]
+// @Router /api/v1/products/{id} [get]
 func (s *Server) getProduct(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -180,7 +180,7 @@ func (s *Server) getProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := s.productService.GetProduct(uint(id))
+	product, err := s.productService.GetProduct(c.Request.Context(), uint(id))
 	if err != nil {
 		utils.NotFoundResponse(c, "product not found")
 		return
@@ -201,7 +201,7 @@ func (s *Server) getProduct(c *gin.Context) {
 // @Failure 400 {object} utils.Response "invalid request data"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 403 {object} utils.Response "admin access required"
-// @Router /products/{id} [put]
+// @Router /api/v1/products/{id} [put]
 func (s *Server) updateProduct(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -215,7 +215,7 @@ func (s *Server) updateProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := s.productService.UpdateProduct(uint(id), &req)
+	product, err := s.productService.UpdateProduct(c.Request.Context(), uint(id), &req)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to update product", err)
 		return
@@ -233,7 +233,7 @@ func (s *Server) updateProduct(c *gin.Context) {
 // @Failure 400 {object} utils.Response "invalid product ID"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 403 {object} utils.Response "admin access required"
-// @Router /products/{id} [delete]
+// @Router /api/v1/products/{id} [delete]
 func (s *Server) deleteProduct(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -241,7 +241,7 @@ func (s *Server) deleteProduct(c *gin.Context) {
 		return
 	}
 
-	if err := s.productService.DeleteProduct(uint(id)); err != nil {
+	if err := s.productService.DeleteProduct(c.Request.Context(), uint(id)); err != nil {
 		utils.InternalServerErrorResponse(c, "failed to delete product", err)
 		return
 	}
@@ -261,7 +261,7 @@ func (s *Server) deleteProduct(c *gin.Context) {
 // @Failure 400 {object} utils.Response "invalid request or file"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 403 {object} utils.Response "admin access required"
-// @Router /products/{id}/images [post]
+// @Router /api/v1/products/{id}/images [post]
 func (s *Server) uploadProductImage(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -281,7 +281,7 @@ func (s *Server) uploadProductImage(c *gin.Context) {
 		return
 	}
 
-	if err := s.productService.AddProductImage(uint(id), url, file.Filename); err != nil {
+	if err := s.productService.AddProductImage(c.Request.Context(), uint(id), url, file.Filename); err != nil {
 		utils.InternalServerErrorResponse(c, "failed to save image record", err)
 		return
 	}
@@ -303,7 +303,7 @@ func (s *Server) uploadProductImage(c *gin.Context) {
 // @Success 200 {object} utils.PaginatedResponse{data=[]dto.ProductSearchResult} "Search results"
 // @Failure 400 {object} utils.Response "Invalid Search query"
 // @Failure 500 {object} utils.Response "Internal server error"
-// @Router /search [get]
+// @Router /api/v1/search [get]
 func (s *Server) searchProducts(c *gin.Context) {
 	var req dto.SearchProductRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
@@ -311,7 +311,7 @@ func (s *Server) searchProducts(c *gin.Context) {
 		return
 	}
 
-	results, meta, err := s.productService.SearchProducts(&req)
+	results, meta, err := s.productService.SearchProducts(c.Request.Context(), &req)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("Product search failed   ")
 		utils.InternalServerErrorResponse(c, "search failed", err)

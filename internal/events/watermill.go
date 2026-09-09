@@ -64,8 +64,6 @@ func NewEventPublisher(ctx context.Context, cfg *appconfig.AWSConfig) (*EventPub
 		return nil, fmt.Errorf("failed to create publisher: %w", err)
 	}
 
-	fmt.Printf("EventQueueName = '%s'\n", cfg.EventQueueName)
-
 	return &EventPublisher{
 		publisher: publisher,
 		queueName: cfg.EventQueueName,

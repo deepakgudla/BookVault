@@ -15,6 +15,19 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
+// GraphQLRequest describes a GraphQL HTTP request.
+type GraphQLRequest struct {
+	Query         string                 `json:"query" example:"query { products { edges { node { id name } } } }"`
+	OperationName string                 `json:"operationName,omitempty"`
+	Variables     map[string]interface{} `json:"variables,omitempty"`
+}
+
+// GraphQLResponse is the standard GraphQL HTTP response envelope.
+type GraphQLResponse struct {
+	Data   interface{} `json:"data,omitempty"`
+	Errors interface{} `json:"errors,omitempty"`
+}
+
 // GraphQLHandler builds the executable GraphQL HTTP handler.
 func (s *Server) GraphQLHandler() *handler.Server {
 
@@ -52,6 +65,34 @@ func (s *Server) graphqlHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
 	}
+}
+
+// @Summary Public GraphQL endpoint
+// @Description Execute public GraphQL queries. The GraphQL schema defines available queries and mutations.
+// @Tags GraphQL
+// @Accept json
+// @Produce json
+// @Param request body GraphQLRequest true "GraphQL request"
+// @Success 200 {object} GraphQLResponse
+// @Failure 400 {object} GraphQLResponse
+// @Router /graphql/public [post]
+func (s *Server) graphqlPublicEndpoint(c *gin.Context) {
+	s.graphqlHandler()(c)
+}
+
+// @Summary Protected GraphQL endpoint
+// @Description Execute authenticated GraphQL queries and mutations. The GraphQL schema defines available operations.
+// @Tags GraphQL
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body GraphQLRequest true "GraphQL request"
+// @Success 200 {object} GraphQLResponse
+// @Failure 400 {object} GraphQLResponse
+// @Failure 401 {object} GraphQLResponse
+// @Router /graphql [post]
+func (s *Server) graphqlProtectedEndpoint(c *gin.Context) {
+	s.graphqlHandler()(c)
 }
 
 func (s *Server) playgroundHandler() gin.HandlerFunc {

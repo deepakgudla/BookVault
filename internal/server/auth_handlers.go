@@ -15,7 +15,7 @@ import (
 // @Param request body dto.RegisterRequest true "User registration data"
 // @Success 201 {object} utils.Response{data=dto.AuthResponse} "User registered successfully"
 // @Failure 400 {object} utils.Response "Invalid request data or user already exists"
-// @Router /auth/register [post]
+// @Router /api/v1/auth/register [post]
 func (s *Server) register(c *gin.Context) {
 	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -23,7 +23,7 @@ func (s *Server) register(c *gin.Context) {
 		return
 	}
 
-	response, err := s.authService.Register(&req)
+	response, err := s.authService.Register(c.Request.Context(), &req)
 	if err != nil {
 		utils.BadRequestResponse(c, "registration failed", err)
 		return
@@ -40,14 +40,14 @@ func (s *Server) register(c *gin.Context) {
 // @Param request body dto.LoginRequest true "User login data"
 // @Success 200 {object} utils.Response{data=dto.AuthResponse} "Login successful"
 // @Failure 401 {object} utils.Response "Invalid email or password"
-// @Router /auth/login [post]
+// @Router /api/v1/auth/login [post]
 func (s *Server) login(c *gin.Context) {
 	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.BadRequestResponse(c, "invalid request data", err)
 		return
 	}
-	response, err := s.authService.Login(&req)
+	response, err := s.authService.Login(c.Request.Context(), &req)
 	if err != nil {
 		utils.UnauthorizedResponse(c, "login failed")
 		return
@@ -64,7 +64,7 @@ func (s *Server) login(c *gin.Context) {
 // @Param request body dto.RefreshTokenRequest true "Refresh token"
 // @Success 200 {object} utils.Response{data=dto.AuthResponse} "Token refreshed successfully"
 // @Failure 401 {object} utils.Response "Invalid refresh token"
-// @Router /auth/refresh [post]
+// @Router /api/v1/auth/refresh [post]
 func (s *Server) refreshToken(c *gin.Context) {
 	var req dto.RefreshTokenRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -72,7 +72,7 @@ func (s *Server) refreshToken(c *gin.Context) {
 		return
 	}
 
-	response, err := s.authService.RefreshToken(&req)
+	response, err := s.authService.RefreshToken(c.Request.Context(), &req)
 	if err != nil {
 		utils.UnauthorizedResponse(c, "refresh Token failed")
 		return
@@ -89,7 +89,7 @@ func (s *Server) refreshToken(c *gin.Context) {
 // @Param request body dto.RefreshTokenRequest true "Refresh token to invalidate"
 // @Success 200 {object} utils.Response "Logout successful"
 // @Failure 401 {object} utils.Response "Invalid or expired refresh token"
-// @Router /auth/logout [post]
+// @Router /api/v1/auth/logout [post]
 func (s *Server) logout(c *gin.Context) {
 	var req dto.RefreshTokenRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -97,7 +97,7 @@ func (s *Server) logout(c *gin.Context) {
 		return
 	}
 
-	if err := s.authService.Logout(req.RefreshToken); err != nil {
+	if err := s.authService.Logout(c.Request.Context(), req.RefreshToken); err != nil {
 		utils.InternalServerErrorResponse(c, "logout failed", err)
 		return
 	}
@@ -113,10 +113,10 @@ func (s *Server) logout(c *gin.Context) {
 // @Success 200 {object} utils.Response{data=dto.UserResponse} "Profile retrieved successfully"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 404 {object} utils.Response "User not found"
-// @Router /users/profile [get]
+// @Router /api/v1/users/profile [get]
 func (s *Server) getProfile(c *gin.Context) {
 	userID := c.GetUint("user_id")
-	profile, err := s.userService.GetProfile(userID)
+	profile, err := s.userService.GetProfile(c.Request.Context(), userID)
 	if err != nil {
 		utils.NotFoundResponse(c, "user not found")
 		return
@@ -136,7 +136,7 @@ func (s *Server) getProfile(c *gin.Context) {
 // @Failure 400 {object} utils.Response "Invalid request data"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 404 {object} utils.Response "User not found"
-// @Router /users/profile [put]
+// @Router /api/v1/users/profile [put]
 func (s *Server) updateProfile(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
@@ -146,7 +146,7 @@ func (s *Server) updateProfile(c *gin.Context) {
 		return
 	}
 
-	profile, err := s.userService.UpdateProfile(userID, &req)
+	profile, err := s.userService.UpdateProfile(c.Request.Context(), userID, &req)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to update profile", err)
 		return

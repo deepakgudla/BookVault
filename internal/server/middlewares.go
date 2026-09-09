@@ -30,6 +30,11 @@ func (s *Server) authMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		if claims.Type != "access" {
+			utils.UnauthorizedResponse(c, "invalid token type")
+			c.Abort()
+			return
+		}
 
 		c.Set("user_id", claims.UserID)
 		c.Set("user_email", claims.Email)

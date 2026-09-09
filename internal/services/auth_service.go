@@ -1,7 +1,7 @@
 package services
 
 import (
-	"errors"
+	"context"
 	"fmt"
 	"time"
 
@@ -44,10 +44,10 @@ func NewAuthService(cfg *config.Config, eventPublisher events.Publisher, userRep
 }
 
 // Register creates a customer account and its initial cart.
-func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, error) {
+func (s *AuthService) Register(ctx context.Context, req *dto.RegisterRequest) (*dto.AuthResponse, error) {
 
-	if _, err := s.userRepo.GetByEmail(req.Email); err == nil {
-		return nil, errors.New("you cannot register with this")
+	if _, err := s.userRepo.GetByEmail(ctx, req.Email); err == nil {
+		return nil, errRegistrationNotAllowed
 	}
 
 	hashedPassword, err := utils.HashPassword(req.Password)
@@ -65,19 +65,19 @@ func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, err
 	}
 
 	createUserAndCart := func(userRepo repository.UserRepositoryInterface, cartRepo repository.CartRepositoryInterface) error {
-		if err := userRepo.Create(&user); err != nil {
+		if err := userRepo.Create(ctx, &user); err != nil {
 			return err
 		}
 
 		cart := models.Cart{UserID: user.ID}
-		if err := cartRepo.Create(&cart); err != nil {
+		if err := cartRepo.Create(ctx, &cart); err != nil {
 			return fmt.Errorf("create cart: %w", err)
 		}
 		return nil
 	}
 
 	if s.db != nil {
-		err = s.db.Transaction(func(tx *gorm.DB) error {
+		err = s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 			return createUserAndCart(repository.NewUserRepository(tx), repository.NewCartRepository(tx))
 		})
 	} else {
@@ -87,53 +87,56 @@ func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, err
 		return nil, err
 	}
 
-	return s.generateAuthResponse(&user)
+	return s.generateAuthResponse(ctx, &user)
 }
 
 // Login authenticates a user and returns a token pair.
-func (s *AuthService) Login(req *dto.LoginRequest) (*dto.AuthResponse, error) {
-	user, err := s.userRepo.GetByEmailAndActive(req.Email, true)
+func (s *AuthService) Login(ctx context.Context, req *dto.LoginRequest) (*dto.AuthResponse, error) {
+	user, err := s.userRepo.GetByEmailAndActive(ctx, req.Email, true)
 	if err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, errInvalidCredentials
 	}
 
 	if !utils.CheckPassword(req.Password, user.Password) {
-		return nil, errors.New("invalid credentials")
+		return nil, errInvalidCredentials
 	}
 
-	return s.generateAuthResponse(user)
+	return s.generateAuthResponse(ctx, user)
 }
 
 // RefreshToken validates a refresh token and returns a new token pair.
-func (s *AuthService) RefreshToken(req *dto.RefreshTokenRequest) (*dto.AuthResponse, error) {
+func (s *AuthService) RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (*dto.AuthResponse, error) {
 	claims, err := utils.ValidateToken(req.RefreshToken, s.config.JWT.Secret)
 	if err != nil {
-		return nil, errors.New("invalid refresh token")
+		return nil, errInvalidRefreshToken
+	}
+	if claims.Type != "refresh" {
+		return nil, errInvalidRefreshToken
 	}
 
-	refreshToken, err := s.userRepo.GetValidRefreshToken(req.RefreshToken)
+	refreshToken, err := s.userRepo.GetValidRefreshToken(ctx, req.RefreshToken)
 	if err != nil {
-		return nil, errors.New("refresh token not found or expired")
+		return nil, fmt.Errorf("refresh token not found or expired: %w", err)
 	}
 
-	user, err := s.userRepo.GetByID(claims.UserID)
+	user, err := s.userRepo.GetByID(ctx, claims.UserID)
 	if err != nil {
-		return nil, errors.New("user not found")
+		return nil, fmt.Errorf("user not found: %w", err)
 	}
 
-	if err := s.userRepo.DeleteRefreshTokenByID(refreshToken.ID); err != nil {
+	if err := s.userRepo.DeleteRefreshTokenByID(ctx, refreshToken.ID); err != nil {
 		log.Error().Err(err).Uint("refresh_token_id", refreshToken.ID).Msg("unable to delete refresh token")
 	}
 
-	return s.generateAuthResponse(user)
+	return s.generateAuthResponse(ctx, user)
 }
 
 // Logout invalidates a refresh token.
-func (s *AuthService) Logout(refreshToken string) error {
-	return s.userRepo.DeleteRefreshToken(refreshToken)
+func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
+	return s.userRepo.DeleteRefreshToken(ctx, refreshToken)
 }
 
-func (s *AuthService) generateAuthResponse(user *models.User) (*dto.AuthResponse, error) {
+func (s *AuthService) generateAuthResponse(ctx context.Context, user *models.User) (*dto.AuthResponse, error) {
 	accessToken, refreshToken, err := utils.GenerateTokenPair(
 		&s.config.JWT,
 		user.ID,
@@ -150,11 +153,16 @@ func (s *AuthService) generateAuthResponse(user *models.User) (*dto.AuthResponse
 		ExpiresAt: time.Now().Add(s.config.JWT.RefreshTokenExpires),
 	}
 
-	if err := s.userRepo.CreateRefreshToken(&refreshTokenModel); err != nil {
+	if err := s.userRepo.CreateRefreshToken(ctx, &refreshTokenModel); err != nil {
 		log.Error().Err(err).Uint("user_id", user.ID).Msg("unable to persist refresh token")
 	}
 
 	go func() {
+		defer func() {
+			if recovered := recover(); recovered != nil {
+				log.Error().Interface("panic", recovered).Uint("user_id", user.ID).Msg("panic while publishing user login event")
+			}
+		}()
 		if err := s.eventPublisher.Publish("USER_LOGGED_IN", user, map[string]string{}); err != nil {
 			log.Error().Err(err).Uint("user_id", user.ID).Msg("unable to publish user login event")
 		}

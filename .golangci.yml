@@ -32,6 +32,15 @@ linters:
       rules:
         - name: exported
 
+  exclusions:
+    rules:
+      - path: graph/resolver/
+        linters:
+          - gocritic
+      - text: "SA1019"
+        linters:
+          - staticcheck
+
 formatters:
   enable:
     - gofmt

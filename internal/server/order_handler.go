@@ -16,11 +16,11 @@ import (
 // @Success 201 {object} utils.Response{data=dto.OrderResponse} "successfully created order"
 // @Failure 400 {object} utils.Response "empty cart or insufficient stock"
 // @Failure 401 {object} utils.Response "unauthorized"
-// @Router /orders [post]
+// @Router /api/v1/orders/ [post]
 func (s *Server) createOrder(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
-	order, err := s.orderService.CreateOrder(userID)
+	order, err := s.orderService.CreateOrder(c.Request.Context(), userID)
 	if err != nil {
 		utils.BadRequestResponse(c, "failed to create order", err)
 		return
@@ -39,14 +39,14 @@ func (s *Server) createOrder(c *gin.Context) {
 // @Success 201 {object} utils.PaginatedResponse{data=[]dto.OrderResponse} "orders retrieved successfully"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 500 {object} utils.Response "Internal server error"
-// @Router /orders [get]
+// @Router /api/v1/orders/ [get]
 func (s *Server) getOrders(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 
-	orders, meta, err := s.orderService.GetOrders(userID, page, limit)
+	orders, meta, err := s.orderService.GetOrders(c.Request.Context(), userID, page, limit)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "failed to fetch orders", err)
 		return
@@ -64,7 +64,7 @@ func (s *Server) getOrders(c *gin.Context) {
 // @Success 200 {object} utils.Response{data=dto.OrderResponse} "order retrieved successfully"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 404 {object} utils.Response "order not found"
-// @Router /orders/{id} [get]
+// @Router /api/v1/orders/{id} [get]
 func (s *Server) getOrder(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
@@ -74,7 +74,7 @@ func (s *Server) getOrder(c *gin.Context) {
 		return
 	}
 
-	order, err := s.orderService.GetOrder(userID, uint(id))
+	order, err := s.orderService.GetOrder(c.Request.Context(), userID, uint(id))
 	if err != nil {
 		utils.NotFoundResponse(c, "order not found")
 		return

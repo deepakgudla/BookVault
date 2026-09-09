@@ -1,26 +1,30 @@
 package repository
 
-import "github.com/deepakgudla/bookvault/internal/models"
+import (
+	"context"
+
+	"github.com/deepakgudla/bookvault/internal/models"
+)
 
 // UserRepositoryInterface defines user persistence operations.
 type UserRepositoryInterface interface {
-	GetByEmail(email string) (*models.User, error)
-	GetByID(id uint) (*models.User, error)
-	GetByEmailAndActive(email string, isActive bool) (*models.User, error)
-	Create(user *models.User) error
-	Update(user *models.User) error
-	Delete(id uint) error
+	GetByEmail(ctx context.Context, email string) (*models.User, error)
+	GetByID(ctx context.Context, id uint) (*models.User, error)
+	GetByEmailAndActive(ctx context.Context, email string, isActive bool) (*models.User, error)
+	Create(ctx context.Context, user *models.User) error
+	Update(ctx context.Context, user *models.User) error
+	Delete(ctx context.Context, id uint) error
 
-	CreateRefreshToken(token *models.RefreshToken) error
-	GetValidRefreshToken(token string) (*models.RefreshToken, error)
-	DeleteRefreshToken(token string) error
-	DeleteRefreshTokenByID(id uint) error
+	CreateRefreshToken(ctx context.Context, token *models.RefreshToken) error
+	GetValidRefreshToken(ctx context.Context, token string) (*models.RefreshToken, error)
+	DeleteRefreshToken(ctx context.Context, token string) error
+	DeleteRefreshTokenByID(ctx context.Context, id uint) error
 }
 
 // CartRepositoryInterface defines cart persistence operations.
 type CartRepositoryInterface interface {
-	GetByUserID(userID uint) (*models.Cart, error)
-	Create(cart *models.Cart) error
-	Update(cart *models.Cart) error
-	Delete(id uint) error
+	GetByUserID(ctx context.Context, userID uint) (*models.Cart, error)
+	Create(ctx context.Context, cart *models.Cart) error
+	Update(ctx context.Context, cart *models.Cart) error
+	Delete(ctx context.Context, id uint) error
 }

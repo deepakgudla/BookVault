@@ -16,7 +16,7 @@ import (
 
 // Register is the resolver for the register field.
 func (r *mutationResolver) Register(ctx context.Context, input dto.RegisterRequest) (*dto.AuthResponse, error) {
-	response, err := r.authService.Register(&input)
+	response, err := r.authService.Register(ctx, &input)
 	if err != nil {
 		return nil, fmt.Errorf("registration failed: %w", err)
 	}
@@ -26,7 +26,7 @@ func (r *mutationResolver) Register(ctx context.Context, input dto.RegisterReque
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, input dto.LoginRequest) (*dto.AuthResponse, error) {
-	response, err := r.authService.Login(&input)
+	response, err := r.authService.Login(ctx, &input)
 	if err != nil {
 		return nil, fmt.Errorf("login failed: %w", err)
 	}
@@ -36,7 +36,7 @@ func (r *mutationResolver) Login(ctx context.Context, input dto.LoginRequest) (*
 
 // RefreshToken is the resolver for the refreshToken field.
 func (r *mutationResolver) RefreshToken(ctx context.Context, input dto.RefreshTokenRequest) (*dto.AuthResponse, error) {
-	response, err := r.authService.RefreshToken(&input)
+	response, err := r.authService.RefreshToken(ctx, &input)
 	if err != nil {
 		return nil, fmt.Errorf("token refresh failed: %w", err)
 	}
@@ -46,7 +46,7 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input dto.RefreshTo
 
 // Logout is the resolver for the logout field.
 func (r *mutationResolver) Logout(ctx context.Context, input dto.RefreshTokenRequest) (bool, error) {
-	err := r.authService.Logout(input.RefreshToken)
+	err := r.authService.Logout(ctx, input.RefreshToken)
 	if err != nil {
 		return false, fmt.Errorf("logout failed: %w", err)
 	}
@@ -61,7 +61,7 @@ func (r *mutationResolver) UpdateProfile(ctx context.Context, input dto.UpdatePr
 		return nil, err
 	}
 
-	user, err := r.userService.UpdateProfile(userID, &input)
+	user, err := r.userService.UpdateProfile(ctx, userID, &input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update profile:  %w", err)
 	}
@@ -75,7 +75,7 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, input dto.CreateC
 		return nil, ErrUnauthorized
 	}
 
-	category, err := r.productService.CreateCategory(&input)
+	category, err := r.productService.CreateCategory(ctx, &input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a category: %w", err)
 	}
@@ -94,7 +94,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, id string, input 
 		return nil, fmt.Errorf("invalid category ID: %w", err)
 	}
 
-	category, err := r.productService.UpdateCategory(categoryID, &input)
+	category, err := r.productService.UpdateCategory(ctx, categoryID, &input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update category: %w", err)
 	}
@@ -113,7 +113,7 @@ func (r *mutationResolver) DeleteCategory(ctx context.Context, id string) (bool,
 		return false, fmt.Errorf("invalid categoryID: %w", err)
 	}
 
-	err = r.productService.DeleteCategory(categoryID)
+	err = r.productService.DeleteCategory(ctx, categoryID)
 	if err != nil {
 		return false, fmt.Errorf("failed to delete category: %w", err)
 	}
@@ -127,7 +127,7 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, input dto.CreatePr
 		return nil, ErrUnauthorized
 	}
 
-	product, err := r.productService.CreateProduct(&input)
+	product, err := r.productService.CreateProduct(ctx, &input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create product: %w", err)
 	}
@@ -146,7 +146,7 @@ func (r *mutationResolver) UpdateProduct(ctx context.Context, id string, input d
 		return nil, fmt.Errorf("invalid product ID: %w", err)
 	}
 
-	product, err := r.productService.UpdateProduct(productID, &input)
+	product, err := r.productService.UpdateProduct(ctx, productID, &input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update product: %w", err)
 	}
@@ -165,7 +165,7 @@ func (r *mutationResolver) DeleteProduct(ctx context.Context, id string) (bool, 
 		return false, fmt.Errorf("invalid productID: %w", err)
 	}
 
-	err = r.productService.DeleteProduct(productID)
+	err = r.productService.DeleteProduct(ctx, productID)
 	if err != nil {
 		return false, fmt.Errorf("failed to delete product: %w", err)
 	}
@@ -180,7 +180,7 @@ func (r *mutationResolver) AddToCart(ctx context.Context, input dto.AddToCartReq
 		return nil, ErrUnauthorized
 	}
 
-	cart, err := r.cartService.AddToCart(userID, &input)
+	cart, err := r.cartService.AddToCart(ctx, userID, &input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add to cart: %w", err)
 	}
@@ -200,7 +200,7 @@ func (r *mutationResolver) UpdateCartItem(ctx context.Context, id string, input 
 		return nil, fmt.Errorf("invalid item ID: %w", err)
 	}
 
-	cart, err := r.cartService.UpdateCartItem(userID, itemID, &input)
+	cart, err := r.cartService.UpdateCartItem(ctx, userID, itemID, &input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update cart item: %w", err)
 	}
@@ -220,7 +220,7 @@ func (r *mutationResolver) RemoveFromCart(ctx context.Context, id string) (bool,
 		return false, fmt.Errorf("invalid item ID: %w", err)
 	}
 
-	err = r.cartService.RemoveFromCart(userID, itemID)
+	err = r.cartService.RemoveFromCart(ctx, userID, itemID)
 	if err != nil {
 		return false, fmt.Errorf("failed to remove from cart: %w", err)
 	}
@@ -235,7 +235,7 @@ func (r *mutationResolver) CreateOrder(ctx context.Context) (*dto.OrderResponse,
 		return nil, ErrUnauthorized
 	}
 
-	order, err := r.orderService.CreateOrder(userID)
+	order, err := r.orderService.CreateOrder(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create order: %w", err)
 	}
@@ -250,7 +250,7 @@ func (r *queryResolver) Me(ctx context.Context) (*dto.UserResponse, error) {
 		return nil, err
 	}
 
-	user, err := r.userService.GetProfile(userID)
+	user, err := r.userService.GetProfile(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user profile: %w", err)
 	}
@@ -262,7 +262,7 @@ func (r *queryResolver) Me(ctx context.Context) (*dto.UserResponse, error) {
 func (r *queryResolver) Products(ctx context.Context, page *int, limit *int) (*model.ProductConnection, error) {
 	p, l := GetPagingNumbers(page, limit)
 
-	products, meta, err := r.productService.GetProducts(p, l)
+	products, meta, err := r.productService.GetProducts(ctx, p, l)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get products: %w", err)
 	}
@@ -292,7 +292,7 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*dto.ProductRes
 		return nil, fmt.Errorf("invalid productID: %w", err)
 	}
 
-	product, err := r.productService.GetProduct(productID)
+	product, err := r.productService.GetProduct(ctx, productID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get product: %w", err)
 	}
@@ -302,7 +302,7 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*dto.ProductRes
 
 // Categories is the resolver for the categories field.
 func (r *queryResolver) Categories(ctx context.Context) ([]*dto.CategoryResponse, error) {
-	categories, err := r.productService.GetCategory()
+	categories, err := r.productService.GetCategory(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get categories: %w", err)
 	}
@@ -322,7 +322,7 @@ func (r *queryResolver) Cart(ctx context.Context) (*dto.CartResponse, error) {
 		return nil, fmt.Errorf("authentication required: %w", err)
 	}
 
-	cart, err := r.cartService.GetCart(userID)
+	cart, err := r.cartService.GetCart(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get cart: %w", err)
 	}
@@ -338,7 +338,7 @@ func (r *queryResolver) Orders(ctx context.Context, page *int, limit *int) (*mod
 	}
 
 	p, l := GetPagingNumbers(page, limit)
-	orders, meta, err := r.orderService.GetOrders(userID, p, l)
+	orders, meta, err := r.orderService.GetOrders(ctx, userID, p, l)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get orders: %w", err)
 	}
@@ -373,7 +373,7 @@ func (r *queryResolver) Order(ctx context.Context, id string) (*dto.OrderRespons
 		return nil, fmt.Errorf("invalid order ID: %w", err)
 	}
 
-	order, err := r.orderService.GetOrder(userID, orderID)
+	order, err := r.orderService.GetOrder(ctx, userID, orderID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get order: %w", err)
 	}

@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/deepakgudla/bookvault/internal/config"
 	"github.com/deepakgudla/bookvault/internal/services"
@@ -24,6 +25,7 @@ type Server struct {
 	uploadService  services.UploadServiceInterface
 	cartService    services.CartServiceInterface
 	orderService   services.OrderServiceInterface
+	authLimiter    *rateLimiter
 }
 
 // New creates an HTTP server with its service dependencies.
@@ -47,6 +49,7 @@ func New(cfg *config.Config,
 		uploadService:  uploadService,
 		cartService:    cartService,
 		orderService:   orderService,
+		authLimiter:    newRateLimiter(10, time.Minute),
 	}
 }
 
@@ -56,9 +59,11 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	router.MaxMultipartMemory = s.config.Upload.MaxFileSize
 
 	// middlewares
-	router.Use(gin.Logger())
+	router.Use(s.requestIDMiddleware())
+	router.Use(s.requestLoggingMiddleware())
 	router.Use(gin.Recovery())
 	router.Use(s.corsMiddleware())
+	router.Use(securityHeadersMiddleware())
 
 	// routes
 	router.GET("/health", s.HealthCheck)
@@ -87,9 +92,9 @@ func (s *Server) SetupRoutes() *gin.Engine {
 
 	api := router.Group("/api/v1")
 	auth := api.Group("/auth")
-	auth.POST("/register", s.register)
-	auth.POST("/login", s.login)
-	auth.POST("logout", s.logout)
+	auth.POST("/register", s.authLimiter.middleware(), s.register)
+	auth.POST("/login", s.authLimiter.middleware(), s.login)
+	auth.POST("/logout", s.logout)
 	auth.POST("/refresh", s.refreshToken)
 
 	protected := api.Group("/")
@@ -145,7 +150,12 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	return router
 }
 
-// HealthCheck reports that the API is available.
+// @Summary Health check
+// @Description Reports whether the API is available.
+// @Tags System
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /health [get]
 func (s *Server) HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 }

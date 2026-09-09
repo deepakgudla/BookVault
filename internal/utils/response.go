@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 // Response is the standard API response envelope.
@@ -82,7 +83,10 @@ func NotFoundResponse(c *gin.Context, message string) {
 
 // InternalServerErrorResponse writes an internal-server-error response.
 func InternalServerErrorResponse(c *gin.Context, message string, err error) {
-	ErrorResponse(c, http.StatusInternalServerError, message, err)
+	if err != nil {
+		log.Error().Err(err).Str("message", message).Msg("internal server error")
+	}
+	ErrorResponse(c, http.StatusInternalServerError, message, nil)
 }
 
 // PaginatedSuccessResponse writes a successful response with pagination metadata.

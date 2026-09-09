@@ -30,12 +30,13 @@ type ServerConfig struct {
 
 // DBConfig contains database connection configuration.
 type DBConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	Name     string
-	SSLMode  string
+	Environment string
+	Host        string
+	Port        string
+	User        string
+	Password    string
+	Name        string
+	SSLMode     string
 }
 
 // JWTConfig contains JSON Web Token configuration.
@@ -89,12 +90,13 @@ func Load() (*Config, error) {
 			AllowedOrigins: getEnv("CORS_ALLOWED_ORIGINS", "*"),
 		},
 		Database: DBConfig{
-			Host:     getEnv("DB_HOST", "localhost"),
-			Port:     getEnv("DB_PORT", "5433"),
-			User:     getEnv("DB_USER", "user"),
-			Password: getEnv("DB_PASSWORD", ""),
-			Name:     getEnv("DB_NAME", "bookvault"),
-			SSLMode:  getEnv("DB_SSLMODE", "disable"),
+			Environment: getEnv("APP_ENV", getEnv("ENV", "development")),
+			Host:        getEnv("DB_HOST", "localhost"),
+			Port:        getEnv("DB_PORT", "5433"),
+			User:        getEnv("DB_USER", "user"),
+			Password:    getEnv("DB_PASSWORD", ""),
+			Name:        getEnv("DB_NAME", "bookvault"),
+			SSLMode:     getEnv("DB_SSLMODE", "disable"),
 		},
 		JWT: JWTConfig{
 			Secret:              getEnv("JWT_SECRET", ""),

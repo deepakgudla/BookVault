@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "description": "Authenticate user with email and password",
                 "consumes": [
@@ -44,7 +44,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.LoginRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.LoginRequest"
                         }
                     }
                 ],
@@ -54,13 +54,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.AuthResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.AuthResponse"
                                         }
                                     }
                                 }
@@ -70,13 +70,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Invalid email or password",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/auth/logout": {
+        "/api/v1/auth/logout": {
             "post": {
                 "description": "Invalidate the refresh token and log out the user",
                 "consumes": [
@@ -96,7 +96,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.RefreshTokenRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -104,19 +104,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Logout successful",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Invalid or expired refresh token",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/auth/refresh": {
+        "/api/v1/auth/refresh": {
             "post": {
                 "description": "Get a new access token using a refresh token",
                 "consumes": [
@@ -136,7 +136,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.RefreshTokenRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -146,13 +146,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.AuthResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.AuthResponse"
                                         }
                                     }
                                 }
@@ -162,13 +162,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Invalid refresh token",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/auth/register": {
+        "/api/v1/auth/register": {
             "post": {
                 "description": "Create a new user account with email and password",
                 "consumes": [
@@ -188,7 +188,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.RegisterRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.RegisterRequest"
                         }
                     }
                 ],
@@ -198,13 +198,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.AuthResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.AuthResponse"
                                         }
                                     }
                                 }
@@ -214,13 +214,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Invalid request data or user already exists",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/cart": {
+        "/api/v1/carts/": {
             "get": {
                 "security": [
                     {
@@ -241,13 +241,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CartResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CartResponse"
                                         }
                                     }
                                 }
@@ -257,65 +257,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "cart not found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/cart/item/{id}": {
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "users can delete cart",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Delete items from cart",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Cart Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successfully deleted item from the cart",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "invalid cart item",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/cart/items": {
+        "/api/v1/carts/items": {
             "post": {
                 "security": [
                     {
@@ -337,7 +291,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.AddToCartRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.AddToCartRequest"
                         }
                     }
                 ],
@@ -347,13 +301,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CartResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CartResponse"
                                         }
                                     }
                                 }
@@ -363,19 +317,19 @@ const docTemplate = `{
                     "400": {
                         "description": "invalid request data or insufficient stock",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/cart/items/{id}": {
+        "/api/v1/carts/items/{id}": {
             "put": {
                 "security": [
                     {
@@ -404,7 +358,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.UpdateCartItemRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.UpdateCartItemRequest"
                         }
                     }
                 ],
@@ -414,13 +368,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CartResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CartResponse"
                                         }
                                     }
                                 }
@@ -430,19 +384,63 @@ const docTemplate = `{
                     "400": {
                         "description": "invalid request data or insufficient stock",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "users can delete cart",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Delete items from cart",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cart Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully deleted item from the cart",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid cart item",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/categories": {
+        "/api/v1/categories": {
             "get": {
                 "description": "retrieve all categories that are active",
                 "produces": [
@@ -458,7 +456,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -466,7 +464,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CategoryResponse"
+                                                "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse"
                                             }
                                         }
                                     }
@@ -477,11 +475,13 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/categories/": {
             "post": {
                 "security": [
                     {
@@ -506,7 +506,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CreateCategoryRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CreateCategoryRequest"
                         }
                     }
                 ],
@@ -516,13 +516,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CategoryResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse"
                                         }
                                     }
                                 }
@@ -532,25 +532,25 @@ const docTemplate = `{
                     "400": {
                         "description": "invalid request data",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "403": {
                         "description": "admin access required",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/categories/{id}": {
+        "/api/v1/categories/{id}": {
             "put": {
                 "security": [
                     {
@@ -582,7 +582,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.UpdateCategoryRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.UpdateCategoryRequest"
                         }
                     }
                 ],
@@ -592,13 +592,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CategoryResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse"
                                         }
                                     }
                                 }
@@ -608,19 +608,19 @@ const docTemplate = `{
                     "400": {
                         "description": "invalid request data",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "403": {
                         "description": "admin access required",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
@@ -649,31 +649,31 @@ const docTemplate = `{
                     "200": {
                         "description": "successfully deleted category",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "invalid category ID",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "403": {
                         "description": "admin access required",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/orders": {
+        "/api/v1/orders/": {
             "get": {
                 "security": [
                     {
@@ -710,7 +710,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.PaginatedResponse"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.PaginatedResponse"
                                 },
                                 {
                                     "type": "object",
@@ -718,7 +718,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.OrderResponse"
+                                                "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.OrderResponse"
                                             }
                                         }
                                     }
@@ -729,13 +729,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
@@ -760,13 +760,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.OrderResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.OrderResponse"
                                         }
                                     }
                                 }
@@ -776,19 +776,19 @@ const docTemplate = `{
                     "400": {
                         "description": "empty cart or insufficient stock",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/orders/{id}": {
+        "/api/v1/orders/{id}": {
             "get": {
                 "security": [
                     {
@@ -818,13 +818,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.OrderResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.OrderResponse"
                                         }
                                     }
                                 }
@@ -834,19 +834,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "order not found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/products": {
+        "/api/v1/products": {
             "get": {
                 "description": "get the list of active products",
                 "produces": [
@@ -878,7 +878,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.PaginatedResponse"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.PaginatedResponse"
                                 },
                                 {
                                     "type": "object",
@@ -886,7 +886,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse"
+                                                "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse"
                                             }
                                         }
                                     }
@@ -897,11 +897,13 @@ const docTemplate = `{
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/products/": {
             "post": {
                 "security": [
                     {
@@ -926,7 +928,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CreateProductRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CreateProductRequest"
                         }
                     }
                 ],
@@ -936,13 +938,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse"
                                         }
                                     }
                                 }
@@ -952,25 +954,25 @@ const docTemplate = `{
                     "400": {
                         "description": "invalid request data",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "403": {
                         "description": "admin access required",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/products/{id}": {
+        "/api/v1/products/{id}": {
             "get": {
                 "description": "fetch detailed information about a specific product",
                 "produces": [
@@ -995,13 +997,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse"
                                         }
                                     }
                                 }
@@ -1011,13 +1013,13 @@ const docTemplate = `{
                     "400": {
                         "description": "invalid product ID",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "product not found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
@@ -1053,7 +1055,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.UpdateProductRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.UpdateProductRequest"
                         }
                     }
                 ],
@@ -1063,13 +1065,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse"
                                         }
                                     }
                                 }
@@ -1079,19 +1081,19 @@ const docTemplate = `{
                     "400": {
                         "description": "invalid request data",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "403": {
                         "description": "admin access required",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
@@ -1120,31 +1122,31 @@ const docTemplate = `{
                     "200": {
                         "description": "successfully deleted product",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "invalid product ID",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "403": {
                         "description": "admin access required",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/products/{id}/images": {
+        "/api/v1/products/{id}/images": {
             "post": {
                 "security": [
                     {
@@ -1184,7 +1186,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1203,25 +1205,118 @@ const docTemplate = `{
                     "400": {
                         "description": "invalid request or file",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "403": {
                         "description": "admin access required",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
             }
         },
-        "/users/profile": {
+        "/api/v1/search": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Search Products using full text search with ranking",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Search Products",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search query",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page Number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by category ID",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Minimum price filter",
+                        "name": "min_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum price filter",
+                        "name": "max_price",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.PaginatedResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductSearchResult"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Search query",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/profile": {
             "get": {
                 "security": [
                     {
@@ -1242,13 +1337,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.UserResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.UserResponse"
                                         }
                                     }
                                 }
@@ -1258,13 +1353,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     }
                 }
@@ -1293,7 +1388,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.UpdateProfileRequest"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.UpdateProfileRequest"
                         }
                     }
                 ],
@@ -1303,13 +1398,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.UserResponse"
+                                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.UserResponse"
                                         }
                                     }
                                 }
@@ -1319,19 +1414,133 @@ const docTemplate = `{
                     "400": {
                         "description": "Invalid request data",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response"
+                            "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/graphql": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Execute authenticated GraphQL queries and mutations. The GraphQL schema defines available operations.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GraphQL"
+                ],
+                "summary": "Protected GraphQL endpoint",
+                "parameters": [
+                    {
+                        "description": "GraphQL request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_server.GraphQLRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_server.GraphQLResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_server.GraphQLResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/internal_server.GraphQLResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/graphql/public": {
+            "post": {
+                "description": "Execute public GraphQL queries. The GraphQL schema defines available queries and mutations.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GraphQL"
+                ],
+                "summary": "Public GraphQL endpoint",
+                "parameters": [
+                    {
+                        "description": "GraphQL request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_server.GraphQLRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_server.GraphQLResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_server.GraphQLResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Reports whether the API is available.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -1339,7 +1548,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_deepakgudla_BookVault_internal_dto.AddToCartRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.AddToCartRequest": {
             "type": "object",
             "required": [
                 "product_id",
@@ -1355,7 +1564,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.AuthResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.AuthResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -1365,35 +1574,44 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.UserResponse"
+                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.UserResponse"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.CartItemResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.CartItemResponse": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "product": {
-                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse"
+                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse"
                 },
                 "quantity": {
                     "type": "integer"
                 },
                 "subtotal": {
                     "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.CartResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.CartResponse": {
             "type": "object",
             "properties": {
                 "cart_items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CartItemResponse"
+                        "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CartItemResponse"
                     }
+                },
+                "created_at": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
@@ -1401,14 +1619,20 @@ const docTemplate = `{
                 "total": {
                     "type": "number"
                 },
+                "updated_at": {
+                    "type": "string"
+                },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.CategoryResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.CategoryResponse": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -1420,10 +1644,13 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.CreateCategoryRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.CreateCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -1437,7 +1664,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.CreateProductRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.CreateProductRequest": {
             "type": "object",
             "required": [
                 "category_id",
@@ -1467,7 +1694,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.LoginRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.LoginRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -1482,9 +1709,12 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.OrderItemResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.OrderItemResponse": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -1492,14 +1722,14 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "product": {
-                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse"
+                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse"
                 },
                 "quantity": {
                     "type": "integer"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.OrderResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.OrderResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -1511,7 +1741,7 @@ const docTemplate = `{
                 "order_items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.OrderItemResponse"
+                        "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.OrderItemResponse"
                     }
                 },
                 "status": {
@@ -1520,15 +1750,21 @@ const docTemplate = `{
                 "total_amount": {
                     "type": "number"
                 },
+                "updated_at": {
+                    "type": "string"
+                },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.ProductImageResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.ProductImageResponse": {
             "type": "object",
             "properties": {
                 "alt_text": {
+                    "type": "string"
+                },
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
@@ -1542,14 +1778,17 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.ProductResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.ProductResponse": {
             "type": "object",
             "properties": {
                 "category": {
-                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.CategoryResponse"
+                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse"
                 },
                 "category_id": {
                     "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
                 },
                 "description": {
                     "type": "string"
@@ -1560,7 +1799,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductImageResponse"
+                        "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductImageResponse"
                     }
                 },
                 "is_active": {
@@ -1577,10 +1816,60 @@ const docTemplate = `{
                 },
                 "stock": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.RefreshTokenRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.ProductSearchResult": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductImageResponse"
+                    }
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rank": {
+                    "type": "number"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_deepakgudla_bookvault_internal_dto.RefreshTokenRequest": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -1591,7 +1880,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.RegisterRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.RegisterRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -1618,7 +1907,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.UpdateCartItemRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.UpdateCartItemRequest": {
             "type": "object",
             "required": [
                 "quantity"
@@ -1630,7 +1919,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.UpdateCategoryRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.UpdateCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -1647,7 +1936,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.UpdateProductRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.UpdateProductRequest": {
             "type": "object",
             "required": [
                 "category_id",
@@ -1676,7 +1965,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.UpdateProfileRequest": {
+        "github_com_deepakgudla_bookvault_internal_dto.UpdateProfileRequest": {
             "type": "object",
             "required": [
                 "first_name",
@@ -1694,9 +1983,12 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_dto.UserResponse": {
+        "github_com_deepakgudla_bookvault_internal_dto.UserResponse": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -1717,10 +2009,13 @@ const docTemplate = `{
                 },
                 "role": {
                     "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_utils.PaginatedResponse": {
+        "github_com_deepakgudla_bookvault_internal_utils.PaginatedResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -1731,14 +2026,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "meta": {
-                    "$ref": "#/definitions/github_com_deepakgudla_BookVault_internal_utils.PaginationMeta"
+                    "$ref": "#/definitions/github_com_deepakgudla_bookvault_internal_utils.PaginationMeta"
                 },
                 "success": {
                     "type": "boolean"
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_utils.PaginationMeta": {
+        "github_com_deepakgudla_bookvault_internal_utils.PaginationMeta": {
             "type": "object",
             "properties": {
                 "limit": {
@@ -1755,7 +2050,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_deepakgudla_BookVault_internal_utils.Response": {
+        "github_com_deepakgudla_bookvault_internal_utils.Response": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -1768,6 +2063,29 @@ const docTemplate = `{
                 "success": {
                     "type": "boolean"
                 }
+            }
+        },
+        "internal_server.GraphQLRequest": {
+            "type": "object",
+            "properties": {
+                "operationName": {
+                    "type": "string"
+                },
+                "query": {
+                    "type": "string",
+                    "example": "query { products { edges { node { id name } } } }"
+                },
+                "variables": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "internal_server.GraphQLResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "errors": {}
             }
         }
     },
@@ -1785,7 +2103,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:1357",
-	BasePath:         "/api",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "bookvault-API",
 	Description:      "A modern e-commerce API built with Go",

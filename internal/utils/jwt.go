@@ -13,6 +13,7 @@ type Claims struct {
 	UserID uint   `json:"user_id"`
 	Email  string `json:"email"`
 	Role   string `json:"role"`
+	Type   string `json:"typ"`
 	jwt.RegisteredClaims
 }
 
@@ -27,8 +28,9 @@ func GenerateTokenPair(cfg *config.JWTConfig, userID uint, email, role string) (
 		UserID: userID,
 		Email:  email,
 		Role:   role,
+		Type:   "access",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(cfg.RefreshTokenExpires)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(cfg.ExpiresIn)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
@@ -43,8 +45,9 @@ func GenerateTokenPair(cfg *config.JWTConfig, userID uint, email, role string) (
 		UserID: userID,
 		Email:  email,
 		Role:   role,
+		Type:   "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(cfg.ExpiresIn)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(cfg.RefreshTokenExpires)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}

@@ -1,7 +1,7 @@
 package services
 
 import (
-	"errors"
+	"context"
 	"fmt"
 
 	"github.com/deepakgudla/bookvault/internal/dto"
@@ -23,17 +23,17 @@ func NewOrderService(db *gorm.DB) *OrderService {
 }
 
 // CreateOrder creates an order from the user's current cart.
-func (s *OrderService) CreateOrder(userID uint) (*dto.OrderResponse, error) {
+func (s *OrderService) CreateOrder(ctx context.Context, userID uint) (*dto.OrderResponse, error) {
 	var orderResponse *dto.OrderResponse
 
-	err := s.db.Transaction(func(tx *gorm.DB) error {
+	err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var cart models.Cart
 		if err := tx.Preload("CartItems.Product").Where("user_id=?", userID).First(&cart).Error; err != nil {
-			return errors.New("cart not found")
+			return errCartNotFound
 		}
 
 		if len(cart.CartItems) == 0 {
-			return errors.New("no items found in the cart")
+			return errEmptyCart
 		}
 
 		var totalAmount float64
@@ -99,7 +99,7 @@ func (s *OrderService) CreateOrder(userID uint) (*dto.OrderResponse, error) {
 }
 
 // GetOrders returns a user's orders and pagination metadata.
-func (s *OrderService) GetOrders(userID uint, page, limit int) ([]dto.OrderResponse, *utils.PaginationMeta, error) {
+func (s *OrderService) GetOrders(ctx context.Context, userID uint, page, limit int) ([]dto.OrderResponse, *utils.PaginationMeta, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -116,9 +116,9 @@ func (s *OrderService) GetOrders(userID uint, page, limit int) ([]dto.OrderRespo
 	var orders []models.Order
 	var total int64
 
-	s.db.Model(&models.Order{}).Where("user_id=?", userID).Count(&total)
+	s.db.WithContext(ctx).Model(&models.Order{}).Where("user_id=?", userID).Count(&total)
 
-	if err := s.db.Preload("OrderItems.Product.Category").Where("user_id=?", userID).Order("created_at DESC").Offset(offset).Limit(limit).Find(&orders).Error; err != nil {
+	if err := s.db.WithContext(ctx).Preload("OrderItems.Product.Category").Where("user_id=?", userID).Order("created_at DESC").Offset(offset).Limit(limit).Find(&orders).Error; err != nil {
 		return nil, nil, err
 	}
 
@@ -140,9 +140,9 @@ func (s *OrderService) GetOrders(userID uint, page, limit int) ([]dto.OrderRespo
 }
 
 // GetOrder returns a user's order by ID.
-func (s *OrderService) GetOrder(userID, orderID uint) (*dto.OrderResponse, error) {
+func (s *OrderService) GetOrder(ctx context.Context, userID, orderID uint) (*dto.OrderResponse, error) {
 	var order models.Order
-	if err := s.db.Preload("OrderItems.Product.Category").Where("id = ? AND user_id = ?", orderID, userID).First(&order).Error; err != nil {
+	if err := s.db.WithContext(ctx).Preload("OrderItems.Product.Category").Where("id = ? AND user_id = ?", orderID, userID).First(&order).Error; err != nil {
 		return nil, err
 	}
 
@@ -169,23 +169,8 @@ func (s *OrderService) convertToOrderResponse(order *models.Order) dto.OrderResp
 		item := order.OrderItems[i]
 
 		orderItems[i] = dto.OrderItemResponse{
-			ID: item.ID,
-			Product: dto.ProductResponse{
-				ID:          item.Product.ID,
-				CategoryID:  item.Product.CategoryID,
-				Name:        item.Product.Name,
-				Description: item.Product.Description,
-				Price:       item.Product.Price,
-				Stock:       item.Product.Stock,
-				SKU:         item.Product.SKU,
-				IsActive:    item.Product.IsActive,
-				Category: dto.CategoryResponse{
-					ID:          item.Product.Category.ID,
-					Name:        item.Product.Category.Name,
-					Description: item.Product.Category.Description,
-					IsActive:    item.Product.Category.IsActive,
-				},
-			},
+			ID:       item.ID,
+			Product:  productResponse(&item.Product),
 			Quantity: item.Quantity,
 			Price:    item.Price,
 

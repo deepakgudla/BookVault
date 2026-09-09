@@ -16,11 +16,11 @@ import (
 // @Success 200 {object} utils.Response{data=dto.CartResponse} "successfully retrieved cart"
 // @Failure 401 {object} utils.Response "Unauthorized"
 // @Failure 404 {object} utils.Response "cart not found"
-// @Router /cart [get]
+// @Router /api/v1/carts/ [get]
 func (s *Server) getCart(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
-	cart, err := s.cartService.GetCart(userID)
+	cart, err := s.cartService.GetCart(c.Request.Context(), userID)
 	if err != nil {
 		utils.NotFoundResponse(c, "cart nt found")
 		return
@@ -38,7 +38,7 @@ func (s *Server) getCart(c *gin.Context) {
 // @Success 200 {object} utils.Response{data=dto.CartResponse} "successfully added products to the cart"
 // @Failure 400 {object} utils.Response "invalid request data or insufficient stock"
 // @Failure 401 {object} utils.Response "unauthorized"
-// @Router /cart/items [post]
+// @Router /api/v1/carts/items [post]
 func (s *Server) addToCart(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
@@ -48,7 +48,7 @@ func (s *Server) addToCart(c *gin.Context) {
 		return
 	}
 
-	cart, err := s.cartService.AddToCart(userID, &req)
+	cart, err := s.cartService.AddToCart(c.Request.Context(), userID, &req)
 	if err != nil {
 		utils.BadRequestResponse(c, "failed to add item to cart", err)
 		return
@@ -67,7 +67,7 @@ func (s *Server) addToCart(c *gin.Context) {
 // @Success 200 {object} utils.Response{data=dto.CartResponse} "cart item updated successfully"
 // @Failure 400 {object} utils.Response "invalid request data or insufficient stock"
 // @Failure 401 {object} utils.Response "unauthorized"
-// @Router /cart/items/{id} [put]
+// @Router /api/v1/carts/items/{id} [put]
 func (s *Server) updateCartItem(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
@@ -83,7 +83,7 @@ func (s *Server) updateCartItem(c *gin.Context) {
 		return
 	}
 
-	cart, err := s.cartService.UpdateCartItem(userID, uint(id), &req)
+	cart, err := s.cartService.UpdateCartItem(c.Request.Context(), userID, uint(id), &req)
 	if err != nil {
 
 		utils.BadRequestResponse(c, "failed to update cart item", err)
@@ -102,7 +102,7 @@ func (s *Server) updateCartItem(c *gin.Context) {
 // @Success 200 {object} utils.Response "successfully deleted item from the cart"
 // @Failure 400 {object} utils.Response "invalid cart item"
 // @Failure 401 {object} utils.Response "unauthorized"
-// @Router /cart/item/{id} [delete]
+// @Router /api/v1/carts/items/{id} [delete]
 func (s *Server) removeFromCart(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
@@ -112,7 +112,7 @@ func (s *Server) removeFromCart(c *gin.Context) {
 		return
 	}
 
-	if err := s.cartService.RemoveFromCart(userID, uint(id)); err != nil {
+	if err := s.cartService.RemoveFromCart(c.Request.Context(), userID, uint(id)); err != nil {
 		utils.BadRequestResponse(c, "failed to remove item from the cart", err)
 		return
 	}

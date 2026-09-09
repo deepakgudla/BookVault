@@ -20,6 +20,7 @@ import (
 	"github.com/deepakgudla/bookvault/internal/server"
 	"github.com/deepakgudla/bookvault/internal/services"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 
 	_ "github.com/deepakgudla/bookvault/docs"
 )
@@ -37,7 +38,7 @@ import (
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost:1357
-// @BasePath /api
+// @BasePath /
 // @schemas http https
 
 // @securityDefinitions.apiKey BearerAuth
@@ -52,15 +53,27 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to load config")
 	}
 
-	db, err := database.New(&cfg.Database)
-	if err != nil {
-		log.Fatal().Err(err).Msg("database connection failed")
+	var db *gorm.DB
+	for attempt := 1; attempt <= 5; attempt++ {
+		db, err = database.New(&cfg.Database)
+		if err == nil {
+			break
+		}
+		if attempt == 5 {
+			log.Fatal().Err(err).Msg("database connection failed")
+		}
+		backoff := time.Duration(1<<uint(attempt-1)) * time.Second
+		log.Warn().Err(err).Int("attempt", attempt).Dur("retry_in", backoff).Msg("database connection failed, retrying")
+		time.Sleep(backoff)
 	}
 
 	mainDB, err := db.DB()
 	if err != nil {
 		log.Fatal().Err(err).Msg("database connection lost")
 	}
+	mainDB.SetMaxOpenConns(25)
+	mainDB.SetMaxIdleConns(5)
+	mainDB.SetConnMaxLifetime(time.Hour)
 
 	defer func() {
 		if err := mainDB.Close(); err != nil {

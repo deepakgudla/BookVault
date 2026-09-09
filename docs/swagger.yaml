@@ -1,6 +1,6 @@
-basePath: /api
+basePath: /
 definitions:
-  github_com_deepakgudla_BookVault_internal_dto.AddToCartRequest:
+  github_com_deepakgudla_bookvault_internal_dto.AddToCartRequest:
     properties:
       product_id:
         type: integer
@@ -11,41 +11,51 @@ definitions:
     - product_id
     - quantity
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.AuthResponse:
+  github_com_deepakgudla_bookvault_internal_dto.AuthResponse:
     properties:
       access_token:
         type: string
       refresh_token:
         type: string
       user:
-        $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.UserResponse'
+        $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.UserResponse'
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.CartItemResponse:
+  github_com_deepakgudla_bookvault_internal_dto.CartItemResponse:
     properties:
+      created_at:
+        type: string
       id:
         type: integer
       product:
-        $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse'
+        $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse'
       quantity:
         type: integer
       subtotal:
         type: number
+      updated_at:
+        type: string
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.CartResponse:
+  github_com_deepakgudla_bookvault_internal_dto.CartResponse:
     properties:
       cart_items:
         items:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CartItemResponse'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CartItemResponse'
         type: array
+      created_at:
+        type: string
       id:
         type: integer
       total:
         type: number
+      updated_at:
+        type: string
       user_id:
         type: integer
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.CategoryResponse:
+  github_com_deepakgudla_bookvault_internal_dto.CategoryResponse:
     properties:
+      created_at:
+        type: string
       description:
         type: string
       id:
@@ -54,8 +64,10 @@ definitions:
         type: boolean
       name:
         type: string
+      updated_at:
+        type: string
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.CreateCategoryRequest:
+  github_com_deepakgudla_bookvault_internal_dto.CreateCategoryRequest:
     properties:
       description:
         type: string
@@ -64,7 +76,7 @@ definitions:
     required:
     - name
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.CreateProductRequest:
+  github_com_deepakgudla_bookvault_internal_dto.CreateProductRequest:
     properties:
       category_id:
         type: integer
@@ -85,7 +97,7 @@ definitions:
     - sku
     - stock
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.LoginRequest:
+  github_com_deepakgudla_bookvault_internal_dto.LoginRequest:
     properties:
       email:
         type: string
@@ -95,18 +107,20 @@ definitions:
     - email
     - password
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.OrderItemResponse:
+  github_com_deepakgudla_bookvault_internal_dto.OrderItemResponse:
     properties:
+      created_at:
+        type: string
       id:
         type: integer
       price:
         type: number
       product:
-        $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse'
+        $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse'
       quantity:
         type: integer
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.OrderResponse:
+  github_com_deepakgudla_bookvault_internal_dto.OrderResponse:
     properties:
       created_at:
         type: string
@@ -114,18 +128,22 @@ definitions:
         type: integer
       order_items:
         items:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.OrderItemResponse'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.OrderItemResponse'
         type: array
       status:
         type: string
       total_amount:
         type: number
+      updated_at:
+        type: string
       user_id:
         type: integer
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.ProductImageResponse:
+  github_com_deepakgudla_bookvault_internal_dto.ProductImageResponse:
     properties:
       alt_text:
+        type: string
+      created_at:
         type: string
       id:
         type: integer
@@ -134,19 +152,21 @@ definitions:
       url:
         type: string
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.ProductResponse:
+  github_com_deepakgudla_bookvault_internal_dto.ProductResponse:
     properties:
       category:
-        $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CategoryResponse'
+        $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse'
       category_id:
         type: integer
+      created_at:
+        type: string
       description:
         type: string
       id:
         type: integer
       images:
         items:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductImageResponse'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductImageResponse'
         type: array
       is_active:
         type: boolean
@@ -158,15 +178,48 @@ definitions:
         type: string
       stock:
         type: integer
+      updated_at:
+        type: string
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.RefreshTokenRequest:
+  github_com_deepakgudla_bookvault_internal_dto.ProductSearchResult:
+    properties:
+      category:
+        $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse'
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      images:
+        items:
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductImageResponse'
+        type: array
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      rank:
+        type: number
+      sku:
+        type: string
+      stock:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  github_com_deepakgudla_bookvault_internal_dto.RefreshTokenRequest:
     properties:
       refresh_token:
         type: string
     required:
     - refresh_token
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.RegisterRequest:
+  github_com_deepakgudla_bookvault_internal_dto.RegisterRequest:
     properties:
       email:
         type: string
@@ -185,7 +238,7 @@ definitions:
     - last_name
     - password
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.UpdateCartItemRequest:
+  github_com_deepakgudla_bookvault_internal_dto.UpdateCartItemRequest:
     properties:
       quantity:
         minimum: 1
@@ -193,7 +246,7 @@ definitions:
     required:
     - quantity
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.UpdateCategoryRequest:
+  github_com_deepakgudla_bookvault_internal_dto.UpdateCategoryRequest:
     properties:
       description:
         type: string
@@ -204,7 +257,7 @@ definitions:
     required:
     - name
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.UpdateProductRequest:
+  github_com_deepakgudla_bookvault_internal_dto.UpdateProductRequest:
     properties:
       category_id:
         type: integer
@@ -224,7 +277,7 @@ definitions:
     - name
     - price
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.UpdateProfileRequest:
+  github_com_deepakgudla_bookvault_internal_dto.UpdateProfileRequest:
     properties:
       first_name:
         type: string
@@ -236,8 +289,10 @@ definitions:
     - first_name
     - last_name
     type: object
-  github_com_deepakgudla_BookVault_internal_dto.UserResponse:
+  github_com_deepakgudla_bookvault_internal_dto.UserResponse:
     properties:
+      created_at:
+        type: string
       email:
         type: string
       first_name:
@@ -252,8 +307,10 @@ definitions:
         type: string
       role:
         type: string
+      updated_at:
+        type: string
     type: object
-  github_com_deepakgudla_BookVault_internal_utils.PaginatedResponse:
+  github_com_deepakgudla_bookvault_internal_utils.PaginatedResponse:
     properties:
       data: {}
       error:
@@ -261,11 +318,11 @@ definitions:
       message:
         type: string
       meta:
-        $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.PaginationMeta'
+        $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.PaginationMeta'
       success:
         type: boolean
     type: object
-  github_com_deepakgudla_BookVault_internal_utils.PaginationMeta:
+  github_com_deepakgudla_bookvault_internal_utils.PaginationMeta:
     properties:
       limit:
         type: integer
@@ -276,7 +333,7 @@ definitions:
       total_pages:
         type: integer
     type: object
-  github_com_deepakgudla_BookVault_internal_utils.Response:
+  github_com_deepakgudla_bookvault_internal_utils.Response:
     properties:
       data: {}
       error:
@@ -285,6 +342,22 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  internal_server.GraphQLRequest:
+    properties:
+      operationName:
+        type: string
+      query:
+        example: query { products { edges { node { id name } } } }
+        type: string
+      variables:
+        additionalProperties: true
+        type: object
+    type: object
+  internal_server.GraphQLResponse:
+    properties:
+      data: {}
+      errors: {}
     type: object
 host: localhost:1357
 info:
@@ -300,7 +373,7 @@ info:
   title: bookvault-API
   version: "1.0"
 paths:
-  /auth/login:
+  /api/v1/auth/login:
     post:
       consumes:
       - application/json
@@ -311,7 +384,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.LoginRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.LoginRequest'
       produces:
       - application/json
       responses:
@@ -319,19 +392,19 @@ paths:
           description: Login successful
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.AuthResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.AuthResponse'
               type: object
         "401":
           description: Invalid email or password
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       summary: User login
       tags:
       - Authentication
-  /auth/logout:
+  /api/v1/auth/logout:
     post:
       consumes:
       - application/json
@@ -342,22 +415,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.RefreshTokenRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.RefreshTokenRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Logout successful
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Invalid or expired refresh token
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       summary: User logout
       tags:
       - Authentication
-  /auth/refresh:
+  /api/v1/auth/refresh:
     post:
       consumes:
       - application/json
@@ -368,7 +441,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.RefreshTokenRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.RefreshTokenRequest'
       produces:
       - application/json
       responses:
@@ -376,19 +449,19 @@ paths:
           description: Token refreshed successfully
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.AuthResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.AuthResponse'
               type: object
         "401":
           description: Invalid refresh token
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       summary: Refresh access token
       tags:
       - Authentication
-  /auth/register:
+  /api/v1/auth/register:
     post:
       consumes:
       - application/json
@@ -399,7 +472,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.RegisterRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -407,19 +480,19 @@ paths:
           description: User registered successfully
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.AuthResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.AuthResponse'
               type: object
         "400":
           description: Invalid request data or user already exists
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       summary: Register a new user
       tags:
       - Authentication
-  /cart:
+  /api/v1/carts/:
     get:
       description: Retrieve current user's shopping cart with all items
       produces:
@@ -429,25 +502,60 @@ paths:
           description: successfully retrieved cart
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CartResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CartResponse'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "404":
           description: cart not found
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Get user's cart
       tags:
       - Cart
-  /cart/item/{id}:
+  /api/v1/carts/items:
+    post:
+      description: users can add products to their cart
+      parameters:
+      - description: item added to cart
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.AddToCartRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully added products to the cart
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CartResponse'
+              type: object
+        "400":
+          description: invalid request data or insufficient stock
+          schema:
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Add items to cart
+      tags:
+      - Cart
+  /api/v1/carts/items/{id}:
     delete:
       description: users can delete cart
       parameters:
@@ -462,56 +570,20 @@ paths:
         "200":
           description: successfully deleted item from the cart
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "400":
           description: invalid cart item
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Delete items from cart
       tags:
       - Cart
-  /cart/items:
-    post:
-      description: users can add products to their cart
-      parameters:
-      - description: item added to cart
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.AddToCartRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: successfully added products to the cart
-          schema:
-            allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CartResponse'
-              type: object
-        "400":
-          description: invalid request data or insufficient stock
-          schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
-        "401":
-          description: unauthorized
-          schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
-      security:
-      - BearerAuth: []
-      summary: Add items to cart
-      tags:
-      - Cart
-  /cart/items/{id}:
     put:
       description: update the quantity of an item in the user's cart
       parameters:
@@ -525,7 +597,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.UpdateCartItemRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.UpdateCartItemRequest'
       produces:
       - application/json
       responses:
@@ -533,25 +605,25 @@ paths:
           description: cart item updated successfully
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CartResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CartResponse'
               type: object
         "400":
           description: invalid request data or insufficient stock
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Update items to cart
       tags:
       - Cart
-  /categories:
+  /api/v1/categories:
     get:
       description: retrieve all categories that are active
       produces:
@@ -561,20 +633,21 @@ paths:
           description: categories fetched successfully
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CategoryResponse'
+                    $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse'
                   type: array
               type: object
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       summary: Get All Categories
       tags:
       - Categories
+  /api/v1/categories/:
     post:
       consumes:
       - application/json
@@ -585,7 +658,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CreateCategoryRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CreateCategoryRequest'
       produces:
       - application/json
       responses:
@@ -593,29 +666,29 @@ paths:
           description: successfully created category
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CategoryResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse'
               type: object
         "400":
           description: invalid request data
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "403":
           description: admin access required
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Create a new category
       tags:
       - Categories
-  /categories/{id}:
+  /api/v1/categories/{id}:
     delete:
       description: delete a category (Admin only)
       parameters:
@@ -628,19 +701,19 @@ paths:
         "200":
           description: successfully deleted category
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "400":
           description: invalid category ID
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "403":
           description: admin access required
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Delete a category
@@ -661,7 +734,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.UpdateCategoryRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.UpdateCategoryRequest'
       produces:
       - application/json
       responses:
@@ -669,29 +742,29 @@ paths:
           description: successfully updated category
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CategoryResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CategoryResponse'
               type: object
         "400":
           description: invalid request data
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "403":
           description: admin access required
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Update a category
       tags:
       - Categories
-  /orders:
+  /api/v1/orders/:
     get:
       description: get the list of orders by user
       parameters:
@@ -712,21 +785,21 @@ paths:
           description: orders retrieved successfully
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.PaginatedResponse'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.PaginatedResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.OrderResponse'
+                    $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.OrderResponse'
                   type: array
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Get user's orders
@@ -741,25 +814,25 @@ paths:
           description: successfully created order
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.OrderResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.OrderResponse'
               type: object
         "400":
           description: empty cart or insufficient stock
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Create an Order
       tags:
       - Orders
-  /orders/{id}:
+  /api/v1/orders/{id}:
     get:
       description: get the information about the specific order
       parameters:
@@ -775,25 +848,25 @@ paths:
           description: order retrieved successfully
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.OrderResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.OrderResponse'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "404":
           description: order not found
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Get order by ID
       tags:
       - Orders
-  /products:
+  /api/v1/products:
     get:
       description: get the list of active products
       parameters:
@@ -814,20 +887,21 @@ paths:
           description: successfully fetched products
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.PaginatedResponse'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.PaginatedResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse'
+                    $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse'
                   type: array
               type: object
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       summary: Get all products
       tags:
       - Products
+  /api/v1/products/:
     post:
       consumes:
       - application/json
@@ -838,7 +912,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.CreateProductRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.CreateProductRequest'
       produces:
       - application/json
       responses:
@@ -846,29 +920,29 @@ paths:
           description: successfully created product
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse'
               type: object
         "400":
           description: invalid request data
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "403":
           description: admin access required
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Create a new product
       tags:
       - Categories
-  /products/{id}:
+  /api/v1/products/{id}:
     delete:
       description: delete a product (admin only)
       parameters:
@@ -881,19 +955,19 @@ paths:
         "200":
           description: successfully deleted product
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "400":
           description: invalid product ID
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "403":
           description: admin access required
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Delete a product
@@ -914,19 +988,19 @@ paths:
           description: successfully fetched product
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse'
               type: object
         "400":
           description: invalid product ID
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "404":
           description: product not found
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       summary: Get a product by ID
       tags:
       - Products
@@ -945,7 +1019,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.UpdateProductRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.UpdateProductRequest'
       produces:
       - application/json
       responses:
@@ -953,29 +1027,29 @@ paths:
           description: successfully fetched product
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.ProductResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductResponse'
               type: object
         "400":
           description: invalid request data
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "403":
           description: admin access required
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: update a product
       tags:
       - Products
-  /products/{id}/images:
+  /api/v1/products/{id}/images:
     post:
       consumes:
       - multipart/form-data
@@ -998,7 +1072,7 @@ paths:
           description: successfully uploaded image
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
                   additionalProperties:
@@ -1008,21 +1082,79 @@ paths:
         "400":
           description: invalid request or file
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "403":
           description: admin access required
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Upload product Image
       tags:
       - Products
-  /users/profile:
+  /api/v1/search:
+    get:
+      description: Search Products using full text search with ranking
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        required: true
+        type: string
+      - default: 1
+        description: Page Number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: integer
+      - description: Minimum price filter
+        in: query
+        name: min_price
+        type: number
+      - description: Maximum price filter
+        in: query
+        name: max_price
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Search results
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.ProductSearchResult'
+                  type: array
+              type: object
+        "400":
+          description: Invalid Search query
+          schema:
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Search Products
+      tags:
+      - Products
+  /api/v1/users/profile:
     get:
       description: Get the authenticated user's profile
       produces:
@@ -1032,19 +1164,19 @@ paths:
           description: Profile retrieved successfully
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.UserResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.UserResponse'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "404":
           description: User not found
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Get user profile
@@ -1060,7 +1192,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.UpdateProfileRequest'
+          $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.UpdateProfileRequest'
       produces:
       - application/json
       responses:
@@ -1068,28 +1200,103 @@ paths:
           description: Profile updated successfully
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            - $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_dto.UserResponse'
+                  $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_dto.UserResponse'
               type: object
         "400":
           description: Invalid request data
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
         "404":
           description: User not found
           schema:
-            $ref: '#/definitions/github_com_deepakgudla_BookVault_internal_utils.Response'
+            $ref: '#/definitions/github_com_deepakgudla_bookvault_internal_utils.Response'
       security:
       - BearerAuth: []
       summary: Update user profile
       tags:
       - User
+  /graphql:
+    post:
+      consumes:
+      - application/json
+      description: Execute authenticated GraphQL queries and mutations. The GraphQL
+        schema defines available operations.
+      parameters:
+      - description: GraphQL request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_server.GraphQLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_server.GraphQLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_server.GraphQLResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_server.GraphQLResponse'
+      security:
+      - BearerAuth: []
+      summary: Protected GraphQL endpoint
+      tags:
+      - GraphQL
+  /graphql/public:
+    post:
+      consumes:
+      - application/json
+      description: Execute public GraphQL queries. The GraphQL schema defines available
+        queries and mutations.
+      parameters:
+      - description: GraphQL request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_server.GraphQLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_server.GraphQLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_server.GraphQLResponse'
+      summary: Public GraphQL endpoint
+      tags:
+      - GraphQL
+  /health:
+    get:
+      description: Reports whether the API is available.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - System
 securityDefinitions:
   BearerAuth:
     description: Bearer and JWT token (bearer jwt_token)
