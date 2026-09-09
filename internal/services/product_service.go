@@ -205,7 +205,7 @@ func (s *ProductService) AddProductImage(ctx context.Context, productID uint, ur
 
 }
 
-// SearchProducts uses full text search to search prodiucts
+// SearchProducts uses full text search to search products.
 func (s *ProductService) SearchProducts(ctx context.Context, req *dto.SearchProductRequest) ([]dto.ProductSearchResult, *utils.PaginationMeta, error) {
 	if req.Page < 1 {
 		req.Page = 1

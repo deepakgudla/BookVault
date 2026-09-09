@@ -30,6 +30,9 @@ type GraphQLResponse struct {
 
 // GraphQLHandler builds the executable GraphQL HTTP handler.
 func (s *Server) GraphQLHandler() *handler.Server {
+	if s.graphqlServer != nil {
+		return s.graphqlServer
+	}
 
 	r := resolver.NewResolver(
 		s.authService,
@@ -55,16 +58,9 @@ func (s *Server) GraphQLHandler() *handler.Server {
 	}
 	serve.Use(extension.AutomaticPersistedQuery{Cache: lru.New[string](100)})
 
-	return serve
+	s.graphqlServer = serve
+	return s.graphqlServer
 
-}
-
-func (s *Server) graphqlHandler() gin.HandlerFunc {
-	h := s.GraphQLHandler()
-
-	return func(c *gin.Context) {
-		h.ServeHTTP(c.Writer, c.Request)
-	}
 }
 
 // @Summary Public GraphQL endpoint
@@ -77,7 +73,7 @@ func (s *Server) graphqlHandler() gin.HandlerFunc {
 // @Failure 400 {object} GraphQLResponse
 // @Router /graphql/public [post]
 func (s *Server) graphqlPublicEndpoint(c *gin.Context) {
-	s.graphqlHandler()(c)
+	s.GraphQLHandler().ServeHTTP(c.Writer, c.Request)
 }
 
 // @Summary Protected GraphQL endpoint
@@ -92,7 +88,7 @@ func (s *Server) graphqlPublicEndpoint(c *gin.Context) {
 // @Failure 401 {object} GraphQLResponse
 // @Router /graphql [post]
 func (s *Server) graphqlProtectedEndpoint(c *gin.Context) {
-	s.graphqlHandler()(c)
+	s.GraphQLHandler().ServeHTTP(c.Writer, c.Request)
 }
 
 func (s *Server) playgroundHandler() gin.HandlerFunc {

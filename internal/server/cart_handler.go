@@ -22,7 +22,7 @@ func (s *Server) getCart(c *gin.Context) {
 
 	cart, err := s.cartService.GetCart(c.Request.Context(), userID)
 	if err != nil {
-		utils.NotFoundResponse(c, "cart nt found")
+		utils.NotFoundResponse(c, "cart not found")
 		return
 	}
 

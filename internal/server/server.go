@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/deepakgudla/bookvault/internal/config"
 	"github.com/deepakgudla/bookvault/internal/services"
 	"github.com/gin-gonic/gin"
@@ -16,8 +17,7 @@ import (
 
 // Server contains the dependencies and route configuration for the HTTP API.
 type Server struct {
-	config *config.Config
-	// db             *gorm.DB
+	config         *config.Config
 	logger         *zerolog.Logger
 	authService    services.AuthServiceInterace
 	productService services.ProductServiceInterface
@@ -26,11 +26,11 @@ type Server struct {
 	cartService    services.CartServiceInterface
 	orderService   services.OrderServiceInterface
 	authLimiter    *rateLimiter
+	graphqlServer  *handler.Server
 }
 
 // New creates an HTTP server with its service dependencies.
 func New(cfg *config.Config,
-	// db *gorm.DB,
 	logger *zerolog.Logger,
 	authService services.AuthServiceInterace,
 	productService services.ProductServiceInterface,
@@ -40,8 +40,7 @@ func New(cfg *config.Config,
 	orderService services.OrderServiceInterface,
 ) *Server {
 	return &Server{
-		config: cfg,
-		// db:             db,
+		config:         cfg,
 		logger:         logger,
 		authService:    authService,
 		productService: productService,
@@ -83,12 +82,12 @@ func (s *Server) SetupRoutes() *gin.Engine {
 
 	graphqlPublic := router.Group("/graphql/public")
 	graphqlPublic.Use(s.graphqlPublicMiddleware())
-	graphqlPublic.POST("/", s.graphqlHandler())
+	graphqlPublic.POST("/", s.graphqlPublicEndpoint)
 
 	graphqlProtected := router.Group("/graphql")
 	graphqlProtected.Use(s.authMiddleware())
 	graphqlProtected.Use(s.graphqlMiddleware())
-	graphqlProtected.POST("/", s.graphqlHandler())
+	graphqlProtected.POST("/", s.graphqlProtectedEndpoint)
 
 	api := router.Group("/api/v1")
 	auth := api.Group("/auth")
@@ -150,7 +149,7 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	return router
 }
 
-// @Summary Health check
+// HealthCheck reports whether the API is available.
 // @Description Reports whether the API is available.
 // @Tags System
 // @Produce json
